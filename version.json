@@ -1,5 +1,6 @@
 {
   "version": "0.9.0",
-  "download": "https://github.com/YOUR_GITHUB/optic-monitor/releases/latest/download/OPTiCAccountMonitor.zip",
-  "notes": "Latest release of OPTiC Account Monitor."
+  "download": "https://github.com/JWisniewski16/optic-monitor/releases/latest/download/OPTiCAccountMonitor.exe",
+  "notes": "- License key system\n- Favorites tab with full account details\n- Single .exe distribution\n- Auto-updater on launch\n- Server detail cards\n- Full troop and item details in account popup\n- Sorting fixes for formatted numbers\n- Instructions tab built in",
+  "mandatory": false
 }
