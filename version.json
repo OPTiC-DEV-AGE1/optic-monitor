@@ -1,5 +1,6 @@
 {
   "version": "0.9.1",
-  "notes": "OPTiC Account Monitor v0.9.1 - Initial public release",
-  "url": "https://github.com/JWisniewski16/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup.exe"
+  "download": "https://github.com/JWisniewski16/optic-monitor/releases/download/v0.9.1/OPTiCAccountMonitor_Setup.exe",
+  "notes": "Fixed database initialization on fresh installs. Added server-side license validation.",
+  "mandatory": true
 }
