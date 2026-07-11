@@ -1,6 +1,6 @@
 {
   "version": "0.9.2",
-  "download": "https://github.com/JWisniewski16/optic-monitor/releases/download/v0.9.1/OPTiCAccountMonitor_Setup.exe",
-  "notes": "Fixed database initialization on fresh installs. Added server-side license validation.",
+  "download": "https://github.com/JWisniewski16/optic-monitor/releases/download/v0.9.2/OPTiCAccountMonitor_Setup.exe",
+  "notes": "Fixed database initialization. Added server-side license validation.",
   "mandatory": true
 }
