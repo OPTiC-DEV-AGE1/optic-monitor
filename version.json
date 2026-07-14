@@ -1,6 +1,6 @@
 {
-  "version": "0.9.3",
-  "download": "https://github.com/JWisniewski16/optic-monitor/releases/latest/download/OPTiCAccountMonitor.exe",
-  "notes": "- Director import (Bots tab)\n- Bot profiles stored in-app\n- Settings layout cleanup\n- Cities/Heroes render optimization\n- New loading screen",
+  "version": "0.9.8",
+  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor.exe",
+  "notes": "- Rebuilt Alerts: unified severity feed\n- Food starvation timers\n- Snooze/acknowledge + per-account thresholds\n- Discord webhook for critical alerts\n- Sidebar alert badge\n- No theme flash on load",
   "mandatory": false
 }
