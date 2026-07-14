@@ -1,6 +1,6 @@
 {
-  "version": "0.9.2",
-  "download": "https://github.com/JWisniewski16/optic-monitor/releases/download/v0.9.2/OPTiCAccountMonitor_Setup.exe",
-  "notes": "Fixed database initialization. Added server-side license validation.",
+  "version": "0.9.3",
+  "download": "https://github.com/JWisniewski16/optic-monitor/releases/latest/download/OPTiCAccountMonitor.exe",
+  "notes": "- Director import (Bots tab)\n- Bot profiles stored in-app\n- Settings layout cleanup\n- Cities/Heroes render optimization\n- New loading screen",
   "mandatory": false
 }
