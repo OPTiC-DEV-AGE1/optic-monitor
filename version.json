@@ -1,6 +1,6 @@
 {
-    "version":  "1.3.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.3.0.exe",
-    "notes":  "- Updates now download in the background and install on restart\n- No more manual downloading or clicking through setup",
+    "version":  "1.4.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.4.0.exe",
+    "notes":  "- Rebuilt map: province borders, relationship colours, prestige-sized cities\n- Gold totals on server panels\n- Removed a lot of dead code behind the map",
     "mandatory":  false
 }
