@@ -1,6 +1,6 @@
 {
-  "version": "1.13.4",
-  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.13.4.exe",
-  "notes": "- Bot windows open properly again, including from the tray",
+  "version": "1.13.5",
+  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.13.5.exe",
+  "notes": "- Fixed adding bots on a new install\n- Add and import now show the real reason when something fails",
   "mandatory": true
 }
