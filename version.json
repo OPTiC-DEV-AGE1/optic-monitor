@@ -1,6 +1,6 @@
 {
-  "version": "1.13.5",
-  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.13.5.exe",
-  "notes": "- Fixed adding bots on a new install\n- Add and import now show the real reason when something fails",
+  "version": "1.14.1",
+  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.14.1.exe",
+  "notes": "- Your licence now survives a restart - no more re-entering the key\n- VIP status refreshes automatically on launch",
   "mandatory": true
 }
