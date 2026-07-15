@@ -1,6 +1,6 @@
 {
-  "version": "1.14.2",
-  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.14.2.exe",
-  "notes": "- One welcome message instead of two\n- Supporters get a VIP welcome",
+  "version": "1.14.3",
+  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.14.3.exe",
+  "notes": "- Fixed two welcome popups appearing at once",
   "mandatory": false
 }
