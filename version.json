@@ -1,6 +1,6 @@
 {
-  "version": "1.1.0",
-  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor.exe",
-  "notes": "- Items post instantly (removed slow listitems call)\n- Holiday, truce and broken-gate tracking\n- Incoming attack alerts\n- Full-map prestige scanner",
+  "version": "1.2.0",
+  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.2.0.exe",
+  "notes": "- Fixed heroes being counted twice after moving cities\n- Full town view: workers, all troops, wall fortifications\n- Food alerts now count incoming shipments (no more false alarms)\n- Onboarding checklist for new users",
   "mandatory": false
 }
