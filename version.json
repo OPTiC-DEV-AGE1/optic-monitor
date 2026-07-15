@@ -1,6 +1,6 @@
 {
-  "version": "1.14.1",
-  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.14.1.exe",
-  "notes": "- Your licence now survives a restart - no more re-entering the key\n- VIP status refreshes automatically on launch",
-  "mandatory": true
+  "version": "1.14.2",
+  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.14.2.exe",
+  "notes": "- One welcome message instead of two\n- Supporters get a VIP welcome",
+  "mandatory": false
 }
