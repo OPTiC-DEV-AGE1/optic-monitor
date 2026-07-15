@@ -1,6 +1,6 @@
 {
-  "version": "1.2.0",
-  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.2.0.exe",
-  "notes": "- Fixed heroes being counted twice after moving cities\n- Full town view: workers, all troops, wall fortifications\n- Food alerts now count incoming shipments (no more false alarms)\n- Onboarding checklist for new users",
-  "mandatory": false
+    "version":  "1.3.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.3.0.exe",
+    "notes":  "- Updates now download in the background and install on restart\n- No more manual downloading or clicking through setup",
+    "mandatory":  false
 }
