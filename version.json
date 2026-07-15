@@ -1,6 +1,6 @@
 {
-  "version": "0.9.8",
+  "version": "1.0.1",
   "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor.exe",
-  "notes": "- Rebuilt Alerts: unified severity feed\n- Food starvation timers\n- Snooze/acknowledge + per-account thresholds\n- Discord webhook for critical alerts\n- Sidebar alert badge\n- No theme flash on load",
+  "notes": "- Autorun v5.0: faster posts, better wave recall\n- Map Scanner v2.0: full castle scanning\n- Google Apps Script included\n- Discord webhook setup guide\n- Installer configures everything automatically",
   "mandatory": false
 }
