@@ -1,6 +1,6 @@
 {
-  "version": "1.0.1",
+  "version": "1.1.0",
   "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor.exe",
-  "notes": "- Autorun v5.0: faster posts, better wave recall\n- Map Scanner v2.0: full castle scanning\n- Google Apps Script included\n- Discord webhook setup guide\n- Installer configures everything automatically",
+  "notes": "- Items post instantly (removed slow listitems call)\n- Holiday, truce and broken-gate tracking\n- Incoming attack alerts\n- Full-map prestige scanner",
   "mandatory": false
 }
