@@ -1,6 +1,6 @@
 {
-    "version":  "1.4.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.4.0.exe",
-    "notes":  "- Rebuilt map: province borders, relationship colours, prestige-sized cities\n- Gold totals on server panels\n- Removed a lot of dead code behind the map",
+    "version":  "1.8.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.8.0.exe",
+    "notes":  "- Bots tab is now available to everyone\n- Launch bots, manage profiles and import from the Director\n- Any account can be set to launch with no autorun script",
     "mandatory":  false
 }
