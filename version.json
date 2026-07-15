@@ -1,6 +1,6 @@
 {
-  "version": "1.13.1",
-  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.13.1.exe",
-  "notes": "- Fixed newly added bots disappearing after a restart\n- New bots now appear at the top of the list",
+  "version": "1.13.2",
+  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.13.2.exe",
+  "notes": "- Fixed opening bot windows - it was raising the wrong window",
   "mandatory": true
 }
