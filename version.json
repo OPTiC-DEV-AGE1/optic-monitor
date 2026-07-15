@@ -1,6 +1,6 @@
 {
-  "version": "1.13.0",
-  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.13.0.exe",
-  "notes": "- Detects bots already running, whoever launched them\n- No more duplicate logins after importing on a new PC\n- Duplicate instances of the same account are closed automatically\n- Stray leftover processes can be cleaned up in one click",
+  "version": "1.13.1",
+  "download": "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.13.1.exe",
+  "notes": "- Fixed newly added bots disappearing after a restart\n- New bots now appear at the top of the list",
   "mandatory": true
 }
