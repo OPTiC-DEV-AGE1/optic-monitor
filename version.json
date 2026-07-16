@@ -1,6 +1,6 @@
 {
-    "version":  "1.18.5",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.18.5.exe",
-    "notes":  "- The pop-out fits without resizing\n- Smaller names, more accounts on screen\n- Editing an account now fits the pop-out window",
+    "version":  "1.18.6",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.18.6.exe",
+    "notes":  "- Pop-out rows are actually compact now - roughly twice as many fit",
     "mandatory":  false
 }
