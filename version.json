@@ -1,6 +1,6 @@
 {
-    "version":  "1.15.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.15.0.exe",
-    "notes":  "- Activity log now shows your local time\n- VIP badge in the sidebar\n- Combat and intel scripts are now supporter perks",
+    "version":  "1.15.2",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.15.2.exe",
+    "notes":  "- Fixed VIP status being lost on launch\n- Fixed the second welcome popup",
     "mandatory":  false
 }
