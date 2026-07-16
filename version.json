@@ -1,6 +1,6 @@
 {
-    "version":  "1.19.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.19.0.exe",
-    "notes":  "- Much lighter on CPU, especially with a big fleet\n- Stops working in the background when you are not looking at it",
+    "version":  "1.19.1",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.19.1.exe",
+    "notes":  "- Big CPU reduction: the app no longer redraws or re-queries when nothing has changed",
     "mandatory":  false
 }
