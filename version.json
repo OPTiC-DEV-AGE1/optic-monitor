@@ -1,6 +1,6 @@
 {
-    "version":  "1.18.2",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.18.2.exe",
-    "notes":  "- Fixed the pop-out bot list not opening\n- Fixed clearing stray bot processes",
+    "version":  "1.18.3",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.18.3.exe",
+    "notes":  "- Pop-out bot list now loads instead of sitting on the splash\n- Added a close button and Esc to the pop-out",
     "mandatory":  false
 }
