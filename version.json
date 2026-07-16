@@ -1,6 +1,6 @@
 {
-    "version":  "1.20.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.20.0.exe",
-    "notes":  "- New Radius Scout script: scouts everything around each of your cities, on repeat",
+    "version":  "1.20.1",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.20.1.exe",
+    "notes":  "- Prestige Monitor no longer flags the whole server\n- Holiday and long-dead accounts drop off the list automatically",
     "mandatory":  false
 }
