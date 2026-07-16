@@ -1,6 +1,6 @@
 {
-    "version":  "1.15.2",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.15.2.exe",
-    "notes":  "- Fixed VIP status being lost on launch\n- Fixed the second welcome popup",
+    "version":  "1.16.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.16.0.exe",
+    "notes":  "- Import from TheNEATBotfather as well as the Director\n- It works out which one you gave it",
     "mandatory":  false
 }
