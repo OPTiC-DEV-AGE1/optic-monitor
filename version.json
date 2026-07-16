@@ -1,6 +1,6 @@
 {
-    "version":  "1.18.4",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.18.4.exe",
-    "notes":  "- The pop-out can be dragged now\n- Compact rows and fewer columns by default\n- Bots list defaults to name, server and status",
+    "version":  "1.18.5",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.18.5.exe",
+    "notes":  "- The pop-out fits without resizing\n- Smaller names, more accounts on screen\n- Editing an account now fits the pop-out window",
     "mandatory":  false
 }
