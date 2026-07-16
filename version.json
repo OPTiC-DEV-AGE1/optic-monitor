@@ -1,6 +1,6 @@
 {
-    "version":  "1.16.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.16.0.exe",
-    "notes":  "- Import from TheNEATBotfather as well as the Director\n- It works out which one you gave it",
+    "version":  "1.18.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.18.0.exe",
+    "notes":  "- Pop the bot list out into a small window you can park anywhere\n- Stays on top so opening a bot no longer buries the app",
     "mandatory":  false
 }
