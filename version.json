@@ -1,6 +1,6 @@
 {
-    "version":  "1.19.4",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.19.4.exe",
-    "notes":  "- Prestige Monitor v1.2: the whole server in about 2 minutes, down from 13",
+    "version":  "1.20.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.20.0.exe",
+    "notes":  "- New Radius Scout script: scouts everything around each of your cities, on repeat",
     "mandatory":  false
 }
