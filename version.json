@@ -1,6 +1,6 @@
 {
-    "version":  "1.21.1",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.21.1.exe",
-    "notes":  "- Opening a bot from the Accounts tab now finds it\n- If it still cannot, it tells you exactly what it looked for",
+    "version":  "1.21.2",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.21.2.exe",
+    "notes":  "- The pop-out closes with the app\n- Unpinning it from always-on-top now sticks",
     "mandatory":  false
 }
