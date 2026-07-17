@@ -1,6 +1,6 @@
 {
-    "version":  "1.22.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.22.0.exe",
-    "notes":  "- Running and Stopped are now colour coded\n- Bigger favourite and pin buttons",
+    "version":  "1.23.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.23.0.exe",
+    "notes":  "- Send food, offline and other alerts to different Discord channels\n- Click an alert to open the account it is about",
     "mandatory":  false
 }
