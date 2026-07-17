@@ -1,6 +1,6 @@
 {
-    "version":  "1.21.2",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.21.2.exe",
-    "notes":  "- The pop-out closes with the app\n- Unpinning it from always-on-top now sticks",
+    "version":  "1.22.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.22.0.exe",
+    "notes":  "- Running and Stopped are now colour coded\n- Bigger favourite and pin buttons",
     "mandatory":  false
 }
