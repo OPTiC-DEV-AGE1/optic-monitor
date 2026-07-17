@@ -1,6 +1,6 @@
 {
-    "version":  "1.20.1",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.20.1.exe",
-    "notes":  "- Prestige Monitor no longer flags the whole server\n- Holiday and long-dead accounts drop off the list automatically",
+    "version":  "1.21.1",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.21.1.exe",
+    "notes":  "- Opening a bot from the Accounts tab now finds it\n- If it still cannot, it tells you exactly what it looked for",
     "mandatory":  false
 }
