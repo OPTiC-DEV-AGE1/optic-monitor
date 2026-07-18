@@ -1,6 +1,6 @@
 {
-    "version":  "1.23.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.23.0.exe",
-    "notes":  "- Send food, offline and other alerts to different Discord channels\n- Click an alert to open the account it is about",
+    "version":  "1.24.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.24.0.exe",
+    "notes":  "Prestige Monitor: click a lord to see their scanned cities, jump straight to them on the map\nBot exe path now has a Browse button instead of typing it in",
     "mandatory":  false
 }
