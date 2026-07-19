@@ -1,6 +1,6 @@
 {
     "version":  "1.25.0",
     "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.25.0.exe",
-    "notes":  "New OPTiC logo, now the app icon on desktop and taskbar\nSort any column - including inside Groups - and your sort now sticks through refreshes\nDelete alerts outright, not just snooze; they return only if the problem happens again\nAdd notes from the Hero, Items and Cities panels\nPrestige Monitor: lords idle longest sort to the top, and Last Gain no longer reads as live activity",
+    "notes":  "New OPTiC logo, now the app icon on desktop and taskbar\nSort any column - including inside Groups - and your sort sticks through refreshes and restarts\nPrestige Monitor: lords idle longest now lead, and Last Gain no longer reads as live activity\nDelete alerts outright, not just snooze; they return only if the problem happens again\nAdd notes from the Hero, Items and Cities panels\nSide panel and Configuration no longer scroll\nScripts page was showing every script one version behind",
     "mandatory":  false
 }
