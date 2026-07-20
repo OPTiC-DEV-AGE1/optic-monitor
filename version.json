@@ -1,6 +1,6 @@
 {
-    "version":  "1.29.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.29.0.exe",
-    "notes":  "Map Data rebuilt - one search and real filters that all three views agree on\nTop bars really do hold still now, verified from an empty table to 32,000 rows\nOne Activity line per launch, with the exact exe and arguments\nSpecific Exe warns when it points at a lone copy of the bot",
+    "version":  "1.30.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.30.0.exe",
+    "notes":  "New bot folders just work - OPTiC sets the Windows 7 compatibility the bot needs, so a fresh copy pulls your login on the first launch\nFixed the \u0027localhost refused to connect\u0027 error when reopening (single-instance + port retry)\nThe map now removes razed and teleported-away cities after every full sweep\nPrestige Monitor header no longer cuts off its numbers\nSecurity and Light-theme polish, plus a fresh-install fix",
     "mandatory":  false
 }
