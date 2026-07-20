@@ -1,6 +1,6 @@
 {
-    "version":  "1.26.1",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.26.1.exe",
-    "notes":  "Fixes a packaging fault in 1.26.0: the Hero Index and Account Monitor Autorun scripts were left out of the installer, so a fresh install showed \u0027This script file is missing from the install\u0027. Both are back. The update check also no longer misses a new release while the version feed is cached.",
+    "version":  "1.27.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.27.0.exe",
+    "notes":  "Live CPU and memory meter on the Bots page - see what the Monitor and every bot are using, and how much of the machine is left. Any account can now be exempted from the proxy list and connect directly, individually or in bulk.",
     "mandatory":  false
 }
