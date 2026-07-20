@@ -1,6 +1,6 @@
 {
-    "version":  "1.26.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.26.0.exe",
-    "notes":  "Hero Index - see every hero on the server and who owns it, linked into Prestige and Map. Sorting and column pickers fixed across every tab. Prestige Monitor and Map Data no longer come back empty when a server is selected. Auto-launch now defaults on.",
+    "version":  "1.26.1",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.26.1.exe",
+    "notes":  "Fixes a packaging fault in 1.26.0: the Hero Index and Account Monitor Autorun scripts were left out of the installer, so a fresh install showed \u0027This script file is missing from the install\u0027. Both are back. The update check also no longer misses a new release while the version feed is cached.",
     "mandatory":  false
 }
