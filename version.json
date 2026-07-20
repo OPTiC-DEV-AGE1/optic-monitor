@@ -1,6 +1,6 @@
 {
-    "version":  "1.25.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.25.0.exe",
-    "notes":  "New OPTiC logo, now the app icon on desktop and taskbar\nSort any column - including inside Groups - and your sort sticks through refreshes and restarts\nPrestige Monitor: lords idle longest now lead, and Last Gain no longer reads as live activity\nDelete alerts outright, not just snooze; they return only if the problem happens again\nAdd notes from the Hero, Items and Cities panels\nSide panel and Configuration no longer scroll\nScripts page was showing every script one version behind",
+    "version":  "1.26.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.26.0.exe",
+    "notes":  "Hero Index - see every hero on the server and who owns it, linked into Prestige and Map. Sorting and column pickers fixed across every tab. Prestige Monitor and Map Data no longer come back empty when a server is selected. Auto-launch now defaults on.",
     "mandatory":  false
 }
