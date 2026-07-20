@@ -1,6 +1,6 @@
 {
-    "version":  "1.27.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.27.0.exe",
-    "notes":  "Live CPU and memory meter on the Bots page - see what the Monitor and every bot are using, and how much of the machine is left. Any account can now be exempted from the proxy list and connect directly, individually or in bulk.",
+    "version":  "1.28.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.28.0.exe",
+    "notes":  "Deleted alerts no longer keep posting to Discord. A Specific Exe path that does not exist now warns you instead of silently refusing to launch, and every bot launch records the exact exe and arguments used so a blank login screen can be diagnosed. Bulk delete accounts. Stat bars in the top of each tab no longer resize as the numbers change.",
     "mandatory":  false
 }
