@@ -1,6 +1,6 @@
 {
-    "version":  "1.28.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.28.0.exe",
-    "notes":  "Deleted alerts no longer keep posting to Discord. A Specific Exe path that does not exist now warns you instead of silently refusing to launch, and every bot launch records the exact exe and arguments used so a blank login screen can be diagnosed. Bulk delete accounts. Stat bars in the top of each tab no longer resize as the numbers change.",
+    "version":  "1.29.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.29.0.exe",
+    "notes":  "Map Data rebuilt - one search and real filters that all three views agree on\nTop bars really do hold still now, verified from an empty table to 32,000 rows\nOne Activity line per launch, with the exact exe and arguments\nSpecific Exe warns when it points at a lone copy of the bot",
     "mandatory":  false
 }
