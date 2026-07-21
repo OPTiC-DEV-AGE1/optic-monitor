@@ -1,6 +1,6 @@
 {
-    "version":  "1.31.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.31.0.exe",
-    "notes":  "Multi-city fix: accounts with several cities sharing the same name now report every city, not just one. Existing data repairs itself on the next sweep.\\nRefreshed the built-in setup and troubleshooting guide.",
+    "version":  "1.32.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.32.0.exe",
+    "notes":  "Incoming attack alerts: a real-time in-app and Discord alert the moment troops are inbound on any city, with the attacker, wave count and ETA.\\nFavorites: choose exactly which stats show on each card.\\nBots: select all, and sort the list by name.\\nThe account monitor autorun script now updates itself whenever the app updates.",
     "mandatory":  false
 }
