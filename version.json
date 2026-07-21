@@ -1,6 +1,6 @@
 {
-    "version":  "1.32.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.32.0.exe",
-    "notes":  "Incoming attack alerts: a real-time in-app and Discord alert the moment troops are inbound on any city, with the attacker, wave count and ETA.\\nFavorites: choose exactly which stats show on each card.\\nBots: select all, and sort the list by name.\\nThe account monitor autorun script now updates itself whenever the app updates.",
+    "version":  "1.33.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.33.0.exe",
+    "notes":  "Attack alerts now break out every incoming wave - attacker, origin, exact troops and arrival time, on Discord and in the app.\\nScout alerts: know the moment you are scouted, even though scouts never show as incoming.\\nYour fleet reliably relaunches after a crash or reboot: forced auto-launch plus a Start with Windows option.\\nA New version available button so you can update without restarting.\\nA branded home screen instead of a blank landing tab.",
     "mandatory":  false
 }
