@@ -98,9 +98,17 @@
   footer{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim2);
     letter-spacing:.1em;margin-top:44px}
   @media(max-width:560px){
-    .card{gap:11px;padding:13px}
+    .card{gap:11px;padding:13px;flex-wrap:wrap}
     .rank{min-width:22px;font-size:16px}
-    .meta{display:none}
+    /* The view count is what the ranking means, so it drops to its own line
+       rather than being hidden. Indented to clear the rank column. */
+    .meta{width:100%;text-align:left;padding-left:33px;margin-top:2px;
+      display:flex;gap:7px;align-items:baseline}
+    .views{font-size:13px}
+    .ago{margin-top:0}
+    .ago::before{content:"·";margin-right:7px;color:var(--border2)}
+    /* beside the tabs this wraps mid-phrase - give it its own line */
+    .rankby{display:block;margin:8px 0 0}
   }
 </style>
 </head>
