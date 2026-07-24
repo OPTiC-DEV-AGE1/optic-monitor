@@ -259,7 +259,6 @@
   .vis button:focus-visible{outline:2px solid var(--grn);outline-offset:-2px}
   .vlabel{font-size:12px;color:var(--dim)}
   .btn.mini{padding:5px 12px;font-size:11.5px;font-weight:600}
-  #chooseBox .share{margin-bottom:2px}
   footer{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim2);
     letter-spacing:.06em;margin-top:34px;padding-top:18px;border-top:1px solid var(--border)}
   .hide{display:none!important}
@@ -334,20 +333,7 @@
       <!-- Ask before handing over a link, not after. Publishing once with the
            answer already known means there is no second call to go wrong. -->
       <div class="p-b">
-        <div id="chooseBox">
-          <div class="share">
-            <span class="vlabel" style="font-size:13.5px;color:var(--txt);font-weight:600">Who can see this report?</span>
-            <div class="vis" role="group" aria-label="Visibility">
-              <button type="button" id="visPub" onclick="setVis('public')">Public</button>
-              <button type="button" id="visUnl" onclick="setVis('unlisted')">Unlisted</button>
-            </div>
-            <span class="note" id="visNote" style="margin:0"></span>
-          </div>
-          <div class="note">Public also lists it in <a href="/feed.html" style="color:var(--grn-b)">Top Reports</a>.
-            Unlisted is reachable only by its link. Either way the report is saved.</div>
-        </div>
-
-        <div id="linkBox" class="hide">
+        <div id="linkBox">
           <div class="seg" role="tablist" aria-label="Link type">
             <button role="tab" id="lkShort" aria-selected="true"  onclick="setLink('short')">Short link</button>
             <button role="tab" id="lkFull"  aria-selected="false" onclick="setLink('full')">Full link</button>
@@ -355,8 +341,7 @@
           <div class="share">
             <input id="shareUrl" readonly aria-label="Share link">
             <button class="btn btn-p" onclick="copyShare()" id="copyBtn">Copy</button>
-            <button class="btn btn-g mini" onclick="reopen()">Change</button>
-          </div>
+                      </div>
           <div class="note" id="linkNote"></div>
         </div>
       </div>
@@ -579,15 +564,11 @@ function show(txt,srcUrl){
   k.textContent=p.type==="battle"?"Battle Report":"Scout Report";
   k.className="kind "+p.type;
   _parsed=p;
-  _code="";_short="";_vis="unlisted";
+  _code="";_short="";
   encode(txt).then(function(h){
     _hash=h;
     _full=location.origin+location.pathname+"#"+h;
-    reopen();                  // ask before handing over a link
-    // ...but bank the report now, not when they answer. Somebody who opens a
-    // report and wanders off has still shown it to us, and that data is what the
-    // calculator gets calibrated against. It goes in unlisted; the answer below
-    // only decides whether it is also listed publicly.
+    setLink(_mode);            // the full link works before the round trip lands
     publish();
   });
   window.scrollTo(0,0);
@@ -626,9 +607,9 @@ function reset(){
   el("out").classList.add("hide");el("sharebox").classList.add("hide");
   el("intake").classList.remove("hide");el("src").value="";
   el("kind").textContent="Report Viewer";el("kind").className="kind";
-  _hash="";_parsed=null;_full="";_short="";_code="";_vis="unlisted";_mode="short";
+  _hash="";_parsed=null;_full="";_short="";_code="";_mode="short";
   _src="";_pub=null;_pubErr="";
-  reopen();
+  setLink("short");
 }
 function copyShare(){
   var i=el("shareUrl");
@@ -672,63 +653,11 @@ function setLink(mode){
    whatever happens to this one. A short link is the convenience layer on top:
    it costs a lookup, so it is opt-in rather than the default.                  */
 var PUBLISH="https://script.google.com/macros/s/AKfycbxpZH6yPQIOWFHsixIKf9JMvjHRxbmgNiZ2cBLUbskXu7cnMoj79qOu_3YzNtrY9pHKsw/exec";
-var _vis="unlisted", _hash="", _parsed=null, _full="", _src="", _pub=null, _pubErr="";
+var _hash="", _parsed=null, _full="", _src="", _pub=null, _pubErr="";
 
-var VIS_TEXT={
-  "public":  "Anyone can find this in Reports of the Day and Reports of the Week.",
-  "unlisted":"Only people you send the link to can open it. It stays out of the feeds."
-};
 
-/* Show the chooser. Also the "Change" path, so picking again after the fact goes
-   through exactly the same code. */
-function reopen(){
-  el("chooseBox").classList.remove("hide");
-  el("linkBox").classList.add("hide");
-  el("visNote").textContent="";
-  el("visPub").setAttribute("aria-pressed",String(_vis==="public"));
-  el("visUnl").setAttribute("aria-pressed",String(_vis==="unlisted"));
-}
 
-function setVis(v){
-  _vis=v;
-  el("visPub").setAttribute("aria-pressed",String(v==="public"));
-  el("visUnl").setAttribute("aria-pressed",String(v==="unlisted"));
-  el("visNote").textContent="Working…";
 
-  function finish(){
-    if(!_code){
-      showLink();
-      el("linkNote").innerHTML="Short links are unavailable right now ("+esc(_pubErr||"not saved")+
-        "), so this is the full link. It works everywhere and never expires.";
-      return;
-    }
-    // It went in unlisted when the report opened, so choosing unlisted is already
-    // true and costs no round trip. Only going public has anything to change.
-    if(v==="unlisted"){showLink();return;}
-    fetch(PUBLISH,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify({action:"visibility",code:_code,visibility:"public"})})
-      .then(function(r){return r.json();})
-      .then(function(j){
-        if(!j||j.result!=="success")throw new Error((j&&j.msg)||"failed");
-        showLink();
-      })
-      .catch(function(e){
-        _vis="unlisted";
-        el("visUnl").setAttribute("aria-pressed","true");
-        el("visPub").setAttribute("aria-pressed","false");
-        el("visNote").textContent="Could not make it public ("+e.message+"). It is saved as unlisted.";
-      });
-  }
-  // The publish fired when the report opened may still be in the air; waiting on
-  // it is what stops a fast click creating a second row for the same report.
-  if(_pub)_pub.then(finish,finish); else finish();
-}
-
-function showLink(){
-  el("chooseBox").classList.add("hide");
-  el("linkBox").classList.remove("hide");
-  setLink(_short?_mode:"full");
-}
 
 function summarize(p){
   var d=p.doc,s={};
@@ -778,7 +707,7 @@ function publish(){
     method:"POST",
     headers:{"Content-Type":"text/plain;charset=utf-8"},
     body:JSON.stringify({
-      action:"publish",kind:_parsed.type,visibility:"unlisted",
+      action:"publish",kind:_parsed.type,visibility:"public",
       payload:_hash,summary:summarize(_parsed),sourceUrl:_src,meta:_parsed.meta||{}
     })
   })
@@ -819,7 +748,7 @@ function demo(){
     '</battleReport></reportData>';
   go();
 }
-reopen();   // chooser is the resting state; nothing is published until asked
+setLink("short");
 
 // A shared link carries the whole report in its fragment - decode and show it.
 (function(){
