@@ -36,8 +36,12 @@
     background:linear-gradient(150deg,#132417,#0c1a10);border:1px solid #234d2c;position:relative}
   .logo::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--grn-b);
     box-shadow:0 0 10px var(--grn-b),0 0 3px #fff inset}
-  .brand{font-weight:900;letter-spacing:.14em;font-size:14px}
+  .brand{font-weight:900;letter-spacing:.14em;font-size:14px;color:var(--txt);text-decoration:none}
   .sp{flex:1}
+  .navlink{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--dim);text-decoration:none;padding:4px 10px;border-radius:100px;border:1px solid transparent}
+  .navlink:hover{color:var(--grn-b);border-color:var(--border2)}
+  .navlink:focus-visible{outline:2px solid var(--grn);outline-offset:2px}
   .kind{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
     padding:4px 10px;border-radius:100px;border:1px solid var(--border2);color:var(--dim)}
   .kind.scout{color:var(--blue);border-color:rgba(88,166,255,.4);background:rgba(88,166,255,.08)}
@@ -138,8 +142,9 @@
 </head>
 <body>
 <header><div class="wrap bar">
-  <span class="logo"></span><span class="brand">OPTiC</span>
+  <span class="logo"></span><a class="brand" href="/">OPTiC</a>
   <span class="sp"></span>
+  <a class="navlink" href="/feed.html">Top reports</a>
   <span class="kind" id="kind">Report Viewer</span>
 </div></header>
 
