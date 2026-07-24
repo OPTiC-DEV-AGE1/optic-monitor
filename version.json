@@ -1,6 +1,6 @@
 {
-    "version":  "1.33.3",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.33.3.exe",
-    "notes":  "Update notices now reach you WITHOUT restarting. OPTiC checks every 15 minutes and raises the notice while you are working, once per release.\\nFixed: while an update was waiting, OPTiC re-downloaded the whole 50 MB installer on every check. It now keeps the copy it already has.\\nThis release is marked required so everyone lands on the new notification logic - after this, updates will reach you on their own.",
-    "mandatory":  true
+    "version":  "1.34.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.34.0.exe",
+    "notes":  "Report Viewer is live. Paste any battle or scout report and read it laid out the way the game lays it out, with the real troop and hero art - then share it with a short link that opens in any browser, on any device.\nThe same viewer runs at opticmonitor.com, so anyone can read a report you send them without installing anything.\nReports are archived, so a link keeps working long after the game deletes the original file.\nNew Tools section, report themes, and Random Ports now tracked on the Items tab.",
+    "mandatory":  false
 }
