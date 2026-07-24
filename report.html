@@ -166,6 +166,24 @@
   #out ::selection{background:#e6d38a;color:#241f10}
   #out ::-moz-selection{background:#e6d38a;color:#241f10}
 
+  /* Parchment: the older, browner sheet. Kept because some people preferred it. */
+  #out.t-parchment .panel{
+    --ink:#3a2a12; --ink2:#6b5636; --ink3:#877349;
+    --sheet:#efe3c4; --rule:#cbbb8e; --frame:#8a6c28; --strip:#e3d5ac;
+    --loss:#9c2b21; --live:#3d6b2c;
+  }
+  /* Slate: for anyone who does not want a bright panel on a dark page. */
+  #out.t-slate .panel{
+    --ink:#e6ecf3; --ink2:#9fb0c2; --ink3:#7c8b9c;
+    --sheet:#141c26; --rule:#2b3a4a; --frame:#3d5169; --strip:#1b2632;
+    --loss:#ff8b7e; --live:#7ee08a;
+  }
+  #out.t-slate .gr-face{background:linear-gradient(180deg,#2a3948,#1d2833);color:#b9c8d8}
+  #out.t-slate .gr-t td,#out.t-slate .gr-row,#out.t-slate td{border-bottom-color:#212e3b}
+  #out.t-slate .side,#out.t-slate .cell,#out.t-slate details{background:#182028}
+  #out.t-slate tbody tr:hover td{background:rgba(120,160,200,.10)}
+  #out.t-slate ::selection{background:#3d5169;color:#eef4fa}
+
   /* two army columns */
   #out .gr-two{display:grid;grid-template-columns:1fr 1fr;gap:0}
   #out .gr-two > * + *{border-left:1px solid var(--rule)}
@@ -301,6 +319,11 @@
       <input id="src" spellcheck="false" placeholder="Paste a report link, or the report XML">
       <button class="btn btn-p" onclick="go()">Open</button>
       <button class="btn btn-g" onclick="demo()">Example</button>
+      <div class="seg" role="group" aria-label="Report theme" title="Report theme">
+        <button type="button" data-th="" onclick="theme('')">Classic</button>
+        <button type="button" data-th="t-parchment" onclick="theme('t-parchment')">Parchment</button>
+        <button type="button" data-th="t-slate" onclick="theme('t-slate')">Slate</button>
+      </div>
     </div>
     <div class="warn" id="warn"></div>
 
@@ -318,11 +341,6 @@
     </div>
   </section>
 
-  <section id="out" class="hide"></section>
-
-  <!-- One link field, one Copy button, and a tab that picks which kind of link
-       goes in it. The old version stacked two link rows and two notes, which
-       made the reader work out which of the two they were meant to send. -->
   <section id="sharebox" class="hide">
     <div class="panel" style="margin-top:14px">
       <div class="p-top">
@@ -334,10 +352,6 @@
            answer already known means there is no second call to go wrong. -->
       <div class="p-b">
         <div id="linkBox">
-          <div class="seg" role="tablist" aria-label="Link type">
-            <button role="tab" id="lkShort" aria-selected="true"  onclick="setLink('short')">Short link</button>
-            <button role="tab" id="lkFull"  aria-selected="false" onclick="setLink('full')">Full link</button>
-          </div>
           <div class="share">
             <input id="shareUrl" readonly aria-label="Share link">
             <button class="btn btn-p" onclick="copyShare()" id="copyBtn">Copy</button>
@@ -347,6 +361,11 @@
       </div>
     </div>
   </section>
+  <section id="out" class="hide"></section>
+
+  <!-- One link field, one Copy button, and a tab that picks which kind of link
+       goes in it. The old version stacked two link rows and two notes, which
+       made the reader work out which of the two they were meant to send. -->
 
   <footer>OPTiC ACCOUNT MONITOR &middot; REPORT VIEWER</footer>
 <!-- Loaded before the viewer script so face() can see it. Separate file, not
@@ -568,7 +587,7 @@ function show(txt,srcUrl){
   encode(txt).then(function(h){
     _hash=h;
     _full=location.origin+location.pathname+"#"+h;
-    setLink(_mode);            // the full link works before the round trip lands
+    setLink();
     publish();
   });
   window.scrollTo(0,0);
@@ -607,10 +626,23 @@ function reset(){
   el("out").classList.add("hide");el("sharebox").classList.add("hide");
   el("intake").classList.remove("hide");el("src").value="";
   el("kind").textContent="Report Viewer";el("kind").className="kind";
-  _hash="";_parsed=null;_full="";_short="";_code="";_mode="short";
+  _hash="";_parsed=null;_full="";_short="";_code="";
   _src="";_pub=null;_pubErr="";
-  setLink("short");
+  setLink();
 }
+/* Themes are a palette swap and nothing else: every colour on the sheet is a
+   variable, so a theme restates only what it changes. Remembered, because
+   re-picking it on every report would be worse than not offering one. */
+function theme(t){
+  var o=el("out");
+  o.className=(o.classList.contains("hide")?"hide ":"")+(t||"");
+  try{localStorage.setItem("rvTheme",t||"");}catch(e){}
+  [].forEach.call(document.querySelectorAll(".seg button"),function(b){
+    b.setAttribute("aria-selected",String((b.getAttribute("data-th")||"")===(t||"")));
+  });
+}
+function themeInit(){var t="";try{t=localStorage.getItem("rvTheme")||"";}catch(e){}theme(t);}
+
 function copyShare(){
   var i=el("shareUrl");
   if(!i.value)return;
@@ -621,31 +653,19 @@ function copyShare(){
   var b=el("copyBtn");b.textContent="Copied";setTimeout(function(){b.textContent="Copy";},1400);
 }
 
-/* ---- which link is in the box ---------------------------------------------
-   Full and short are two answers to the same question, so they share one field
-   and one Copy button instead of stacking two rows the reader has to choose
-   between. Full is the default: it needs no server and cannot rot.          */
-var _mode="short", _short="", _code="";
+/* ---- the share link ---------------------------------------------------------
+   Short only. The self-contained long link is still what the short code resolves
+   to, but it is never put in front of anyone: one link, no choice to make.   */
+var _short="", _code="";
 
-function setLink(mode){
-  _mode=mode;
-  el("lkFull").setAttribute("aria-selected",String(mode==="full"));
-  el("lkShort").setAttribute("aria-selected",String(mode==="short"));
-  el("copyBtn").textContent="Copy";
+function setLink(){
   var f=el("shareUrl");
-
-  if(mode==="full"){
-    f.classList.remove("short");
-    f.value=_full;
-    el("linkNote").innerHTML="The whole report is encoded inside this one &mdash; it opens with no "+
-      "server involved at all, so it cannot rot.";
-    return;
-  }
-  f.classList.add("short");
+  el("copyBtn").textContent="Copy";
   f.value=_short;
   el("linkNote").innerHTML=_short
-    ? "Short enough to paste anywhere. Looks the report up when opened."
-    : "Being created&hellip;";
+    ? "Ready to share &mdash; opens in any browser, and it is listed in "+
+      "<a href='/feed.html' style='color:var(--grn-b)'>Top Reports</a>."
+    : "Creating the share link&hellip;";
 }
 
 /* ---------- short links ------------------------------------------------------
@@ -716,11 +736,11 @@ function publish(){
     if(!j||j.result!=="success"||!j.code)throw new Error((j&&j.msg)||"no code returned");
     _code=j.code;
     _short=location.origin+"/"+j.code;
+    setLink();          // paint it - nothing else is going to
   })
   .catch(function(e){
-    // The full link needs no server at all, so a failed save costs the short
-    // link and the archive row, not the ability to share.
     _short="";_code="";_pubErr=e.message;
+    el("linkNote").innerHTML="Could not create a share link ("+esc(e.message)+"). Try again in a moment.";
   });
   return _pub;
 }
@@ -748,7 +768,7 @@ function demo(){
     '</battleReport></reportData>';
   go();
 }
-setLink("short");
+setLink();
 
 // A shared link carries the whole report in its fragment - decode and show it.
 (function(){
