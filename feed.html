@@ -123,14 +123,14 @@
 <div class="wrap">
   <div class="head">
     <h1>Top Reports</h1>
-    <p class="lead">The scout and battle reports players chose to share publicly, ranked by how many
-       times each one has been opened. Unlisted reports never appear here.</p>
+    <p class="lead">The scout and battle reports players chose to share publicly, ranked by the number
+       of troops destroyed. Unlisted reports never appear here.</p>
 
     <div class="tabs" role="tablist" aria-label="Time window">
       <button role="tab" id="tabDay"  aria-selected="true"  onclick="load('day')">Today</button>
       <button role="tab" id="tabWeek" aria-selected="false" onclick="load('week')">This week</button>
     </div>
-    <span class="rankby" id="rankby">ranked by views</span>
+    <span class="rankby" id="rankby">ranked by troops killed</span>
   </div>
 
   <div id="out"></div>
@@ -217,8 +217,8 @@ function card(r,i){
       "<div class='sub'>"+subline(r)+"</div>"+
       "<div class='facts'>"+facts(r)+"</div>"+
     "</div>"+
-    "<div class='meta'><div class='views'>"+n(r.views||0)+"</div>"+
-      "<div class='vlab'>views</div><div class='ago'>"+esc(ago(r.time))+"</div></div>"+
+    "<div class='meta'><div class='views'>"+n(r.kills||0)+"</div>"+
+      "<div class='vlab'>killed</div><div class='ago'>"+esc(ago(r.time))+"</div></div>"+
   "</a>";
 }
 
@@ -257,7 +257,7 @@ function load(win){
 }
 
 function render(list,win){
-  el("rankby").textContent=list.length?("ranked by views · "+list.length+" report"+(list.length===1?"":"s")):"";
+  el("rankby").textContent=list.length?("ranked by troops killed · "+list.length+" report"+(list.length===1?"":"s")):"";
   el("out").innerHTML=list.length
     ? "<div class='list'>"+list.map(card).join("")+"</div>"
     : empty(win);

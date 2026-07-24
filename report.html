@@ -226,6 +226,13 @@
   footer{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim2);
     letter-spacing:.06em;margin-top:34px;padding-top:18px;border-top:1px solid var(--border)}
   .hide{display:none!important}
+  .empty{text-align:center;padding:44px 20px 8px}
+  .empty-mark{width:62px;height:62px;margin:0 auto 15px;border-radius:18px;display:grid;place-items:center;
+    background:linear-gradient(150deg,#132417,#0c1a10);border:1px solid #234d2c;position:relative}
+  .empty-mark::before{content:"";width:19px;height:19px;border-radius:50%;background:var(--grn-b);
+    box-shadow:0 0 26px var(--grn-b),0 0 6px #fff inset}
+  .empty-t{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .empty-s{font-size:12.5px;color:var(--dim);margin:5px auto 0;max-width:44ch;line-height:1.6}
 </style>
 </head>
 <body>
@@ -252,8 +259,16 @@
         <button class="btn btn-g" onclick="demo()">Load an example</button>
       </div>
       <div class="warn" id="warn"></div>
-      <div class="note">Tip: opening a report link in your browser shows the raw XML &mdash; select all, copy, and paste it above.</div>
     </div></div>
+
+    <!-- The page was a headline and an empty box before this. It lives inside
+         #intake so it disappears with it the moment a report renders. -->
+    <div class="empty">
+      <div class="empty-mark"></div>
+      <div class="empty-t">Your report will appear here</div>
+      <div class="empty-s">Paste a battle or scout report link above and it opens in seconds
+        &mdash; readable, with a link you can send anyone.</div>
+    </div>
   </section>
 
   <section id="out" class="hide"></section>
@@ -465,9 +480,9 @@ function scout(doc){
 
 /* ---------- flow ---------- */
 var _raw="";
-function show(txt){
+function show(txt,srcUrl){
   var p=parse(txt);
-  _raw=txt;
+  _raw=txt;_src=srcUrl||"";
   el("out").innerHTML=p.type==="battle"?battle(p.doc):scout(p.doc);
   el("out").classList.remove("hide");
   el("intake").classList.add("hide");
@@ -476,11 +491,16 @@ function show(txt){
   k.textContent=p.type==="battle"?"Battle Report":"Scout Report";
   k.className="kind "+p.type;
   _parsed=p;
-  _code="";_short="";
+  _code="";_short="";_vis="unlisted";
   encode(txt).then(function(h){
     _hash=h;
     _full=location.origin+location.pathname+"#"+h;
-    reopen();                // ask before handing over anything
+    reopen();                  // ask before handing over a link
+    // ...but bank the report now, not when they answer. Somebody who opens a
+    // report and wanders off has still shown it to us, and that data is what the
+    // calculator gets calibrated against. It goes in unlisted; the answer below
+    // only decides whether it is also listed publicly.
+    publish();
   });
   window.scrollTo(0,0);
 }
@@ -488,16 +508,28 @@ function go(){
   var v=el("src").value.trim();
   var w=el("warn");w.style.display="none";
   if(!v){w.innerHTML="<b>Nothing pasted.</b> Paste the report XML above.";w.style.display="block";return;}
-  // A pasted LINK cannot be fetched from here: the game serves reports over plain
-  // HTTP with no cross-origin access, so the browser blocks it outright. Point at
-  // the raw file instead so it can be opened and copied.
-  if(/^https?:\/\//i.test(v)||/evony\.com/i.test(v)){
-    var raw=v.replace(/^\s*/,"").replace(/default\.html\?/i,"");
-    if(!/^https?:\/\//i.test(raw))raw="http://"+raw;
-    w.innerHTML="<b>That is a link, not the report.</b> Your browser is not allowed to fetch it from here "+
-      "(the game serves reports over plain HTTP with no cross-origin access). "+
-      "<a href='"+esc(raw)+"' target='_blank' rel='noopener'>Open the raw XML &#8599;</a> then copy all of it and paste it above.";
-    w.style.display="block";return;
+  // A pasted LINK cannot be fetched by the browser - the game serves reports over
+  // plain HTTP with no cross-origin header, so the request is blocked before it
+  // leaves. The report server fetches it instead, the same way the desktop app
+  // does through its own backend.
+  if(/^https?:\/\//i.test(v)||/evony\.com/i.test(v)||/\.xml\s*$/i.test(v)){
+    w.innerHTML="Fetching the report&hellip;";w.style.display="block";
+    fetch(PUBLISH+"?fetch="+encodeURIComponent(v),{cache:"no-store"})
+      .then(function(r){return r.json();})
+      .then(function(j){
+        if(!j||j.result!=="success")throw new Error((j&&j.msg)||"could not fetch that link");
+        w.style.display="none";
+        show(j.xml,j.url);
+      })
+      .catch(function(e){
+        var raw=v.replace(/default\.html\?/i,"");
+        if(!/^https?:\/\//i.test(raw))raw="http://"+raw;
+        w.innerHTML="<b>Could not open that link.</b> "+esc(e.message)+
+          " <a href='"+esc(raw)+"' target='_blank' rel='noopener'>Open the raw XML &#8599;</a> "+
+          "and paste it above instead.";
+        w.style.display="block";
+      });
+    return;
   }
   try{show(v);}catch(e){w.innerHTML="<b>Could not read that.</b> "+esc(e.message);w.style.display="block";}
 }
@@ -507,6 +539,7 @@ function reset(){
   el("intake").classList.remove("hide");el("src").value="";
   el("kind").textContent="Report Viewer";el("kind").className="kind";
   _hash="";_parsed=null;_full="";_short="";_code="";_vis="unlisted";_mode="short";
+  _src="";_pub=null;_pubErr="";
   reopen();
 }
 function copyShare(){
@@ -551,7 +584,7 @@ function setLink(mode){
    whatever happens to this one. A short link is the convenience layer on top:
    it costs a lookup, so it is opt-in rather than the default.                  */
 var PUBLISH="https://script.google.com/macros/s/AKfycbxpZH6yPQIOWFHsixIKf9JMvjHRxbmgNiZ2cBLUbskXu7cnMoj79qOu_3YzNtrY9pHKsw/exec";
-var _vis="unlisted", _hash="", _parsed=null, _full="";
+var _vis="unlisted", _hash="", _parsed=null, _full="", _src="", _pub=null, _pubErr="";
 
 var VIS_TEXT={
   "public":  "Anyone can find this in Reports of the Day and Reports of the Week.",
@@ -572,23 +605,35 @@ function setVis(v){
   _vis=v;
   el("visPub").setAttribute("aria-pressed",String(v==="public"));
   el("visUnl").setAttribute("aria-pressed",String(v==="unlisted"));
+  el("visNote").textContent="Working…";
 
-  // Already published once - a change of mind edits that row rather than minting
-  // a second code for the same report.
-  if(_code){
-    el("visNote").textContent="Updating…";
+  function finish(){
+    if(!_code){
+      showLink();
+      el("linkNote").innerHTML="Short links are unavailable right now ("+esc(_pubErr||"not saved")+
+        "), so this is the full link. It works everywhere and never expires.";
+      return;
+    }
+    // It went in unlisted when the report opened, so choosing unlisted is already
+    // true and costs no round trip. Only going public has anything to change.
+    if(v==="unlisted"){showLink();return;}
     fetch(PUBLISH,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify({action:"visibility",code:_code,visibility:v})})
+      body:JSON.stringify({action:"visibility",code:_code,visibility:"public"})})
       .then(function(r){return r.json();})
       .then(function(j){
         if(!j||j.result!=="success")throw new Error((j&&j.msg)||"failed");
         showLink();
       })
-      .catch(function(e){el("visNote").textContent="Could not change that ("+e.message+").";});
-    return;
+      .catch(function(e){
+        _vis="unlisted";
+        el("visUnl").setAttribute("aria-pressed","true");
+        el("visPub").setAttribute("aria-pressed","false");
+        el("visNote").textContent="Could not make it public ("+e.message+"). It is saved as unlisted.";
+      });
   }
-  el("visNote").textContent="Saving…";
-  publish();
+  // The publish fired when the report opened may still be in the air; waiting on
+  // it is what stops a fast click creating a second row for the same report.
+  if(_pub)_pub.then(finish,finish); else finish();
 }
 
 function showLink(){
@@ -635,17 +680,18 @@ function summarize(p){
    calibrated against, so a report viewed and not recorded is a report lost.
    Visibility only decides whether it also shows up in the public feed. */
 function publish(){
-  if(!PUBLISH||!_hash||!_parsed)return;
+  if(!PUBLISH||!_hash||!_parsed)return null;
+  _pubErr="";
 
   // text/plain keeps this a "simple" request. Apps Script cannot answer the
   // preflight that application/json would trigger, so the body is JSON but the
   // header deliberately is not.
-  fetch(PUBLISH,{
+  _pub=fetch(PUBLISH,{
     method:"POST",
     headers:{"Content-Type":"text/plain;charset=utf-8"},
     body:JSON.stringify({
-      action:"publish",kind:_parsed.type,visibility:_vis,
-      payload:_hash,summary:summarize(_parsed),meta:_parsed.meta||{}
+      action:"publish",kind:_parsed.type,visibility:"unlisted",
+      payload:_hash,summary:summarize(_parsed),sourceUrl:_src,meta:_parsed.meta||{}
     })
   })
   .then(function(r){return r.json();})
@@ -653,21 +699,20 @@ function publish(){
     if(!j||j.result!=="success"||!j.code)throw new Error((j&&j.msg)||"no code returned");
     _code=j.code;
     _short=location.origin+"/"+j.code;
-    showLink();
   })
   .catch(function(e){
     // The full link needs no server at all, so a failed save costs the short
     // link and the archive row, not the ability to share.
-    _short="";_code="";
-    showLink();
-    el("linkNote").innerHTML="Short links are unavailable right now ("+esc(e.message)+
-      "), so this is the full link. It works everywhere and never expires.";
+    _short="";_code="";_pubErr=e.message;
   });
+  return _pub;
 }
 function demo(){
+  // Placeholder names on purpose - a sample report should not put a real
+  // player's name and hero in front of everyone who clicks the example.
   el("src").value='<reportData><battleReport isAttack="false" isAttackSuccess="false" round="8" injuredPer="13" honor="-201067">'+
-    '<attackTroop king="SilentStalker" heroName="B66" heroLevel="662"><troopUnit typeId="4" count="15000" lose="15000"/></attackTroop>'+
-    '<defendTroop king="Praying Mantis"><troopUnit typeId="18" count="7193" lose="5473"/><troopUnit typeId="15" count="1" lose="0"/></defendTroop>'+
+    '<attackTroop king="Attacker" heroName="Hero A" heroLevel="662"><troopUnit typeId="4" count="15000" lose="15000"/></attackTroop>'+
+    '<defendTroop king="Defender" heroName="Hero B" heroLevel="610"><troopUnit typeId="18" count="7193" lose="5473"/><troopUnit typeId="15" count="1" lose="0"/></defendTroop>'+
     '<backTroop><troops><troopInfo typeId="18" remain="6536"/><troopInfo typeId="7" remain="80331711"/>'+
     '<troopInfo typeId="10" remain="18976027"/><troopInfo typeId="13" remain="12260987"/></troops></backTroop>'+
     '</battleReport></reportData>';
