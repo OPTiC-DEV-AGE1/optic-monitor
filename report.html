@@ -58,10 +58,10 @@
   #intake{margin-top:26px}
   h1{font-size:clamp(19px,3vw,24px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:6px}
   .lead{color:var(--dim);font-size:13px;max-width:66ch;margin-bottom:14px}
-  /* Fixed height: what goes in here is usually one line, and a drag handle on a
-     box nobody needs to enlarge is just clutter. Long XML scrolls. */
-  textarea{width:100%;height:96px;background:#080b10;color:var(--txt);border:1px solid var(--border2);
-    border-radius:10px;padding:11px 13px;font-family:var(--mono);font-size:12px;line-height:1.5;resize:none}
+  /* Fixed and short: what goes in here is usually one line, and a drag handle on
+     a box nobody needs to enlarge is just clutter. Long XML scrolls. */
+  textarea{width:100%;height:62px;background:#080b10;color:var(--txt);border:1px solid var(--border2);
+    border-radius:10px;padding:10px 13px;font-family:var(--mono);font-size:12px;line-height:1.5;resize:none}
   textarea:focus{outline:none;border-color:var(--grn);box-shadow:0 0 0 3px rgba(63,185,80,.12)}
   textarea::placeholder{color:var(--dim2)}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
@@ -157,6 +157,9 @@
   /* The dark-page selection colour swallows brown ink. Gold-on-ink instead. */
   #out ::selection{background:#d8b44a;color:#2a1d08}
   #out ::-moz-selection{background:#d8b44a;color:#2a1d08}
+  /* Just enough to show which row the pointer is on. These tables are a document
+     to read, not a list to pick from, so anything stronger is noise. */
+  #out tbody tr:hover td{background:rgba(109,82,32,.09)}
   /* Banner: the dark bar the in-game report leads with. */
   #out .outcome{
     background:linear-gradient(180deg,#7d5f26,#5a4217);
@@ -219,7 +222,7 @@
   .vis button:focus-visible{outline:2px solid var(--grn);outline-offset:-2px}
   .vlabel{font-size:12px;color:var(--dim)}
   .btn.mini{padding:5px 12px;font-size:11.5px;font-weight:600}
-  #shortCtl{margin-top:13px;padding-top:13px;border-top:1px solid var(--border)}
+  #chooseBox .share{margin-bottom:2px}
   footer{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim2);
     letter-spacing:.06em;margin-top:34px;padding-top:18px;border-top:1px solid var(--border)}
   .hide{display:none!important}
@@ -265,25 +268,33 @@
         <span class="sp"></span>
         <button class="btn btn-g mini" onclick="reset()">New report</button>
       </div>
+      <!-- Ask before handing over a link, not after. Publishing once with the
+           answer already known means there is no second call to go wrong. -->
       <div class="p-b">
-        <div class="seg" role="tablist" aria-label="Link type">
-          <button role="tab" id="lkShort" aria-selected="true"  onclick="setLink('short')">Short link</button>
-          <button role="tab" id="lkFull"  aria-selected="false" onclick="setLink('full')">Full link</button>
-        </div>
-
-        <div class="share">
-          <input id="shareUrl" readonly aria-label="Share link">
-          <button class="btn btn-p" onclick="copyShare()" id="copyBtn">Copy</button>
-        </div>
-        <div class="note" id="linkNote"></div>
-
-        <div class="share" style="margin-top:13px;padding-top:13px;border-top:1px solid var(--border)">
-          <span class="vlabel">Who can find it</span>
-          <div class="vis" role="group" aria-label="Visibility">
-            <button type="button" id="visPub" aria-pressed="false" onclick="setVis('public')">Public</button>
-            <button type="button" id="visUnl" aria-pressed="true"  onclick="setVis('unlisted')">Unlisted</button>
+        <div id="chooseBox">
+          <div class="share">
+            <span class="vlabel" style="font-size:13.5px;color:var(--txt);font-weight:600">Who can see this report?</span>
+            <div class="vis" role="group" aria-label="Visibility">
+              <button type="button" id="visPub" onclick="setVis('public')">Public</button>
+              <button type="button" id="visUnl" onclick="setVis('unlisted')">Unlisted</button>
+            </div>
+            <span class="note" id="visNote" style="margin:0"></span>
           </div>
-          <span class="note" id="visNote" style="margin:0"></span>
+          <div class="note">Public also lists it in <a href="/feed.html" style="color:var(--grn-b)">Top Reports</a>.
+            Unlisted is reachable only by its link. Either way the report is saved.</div>
+        </div>
+
+        <div id="linkBox" class="hide">
+          <div class="seg" role="tablist" aria-label="Link type">
+            <button role="tab" id="lkShort" aria-selected="true"  onclick="setLink('short')">Short link</button>
+            <button role="tab" id="lkFull"  aria-selected="false" onclick="setLink('full')">Full link</button>
+          </div>
+          <div class="share">
+            <input id="shareUrl" readonly aria-label="Share link">
+            <button class="btn btn-p" onclick="copyShare()" id="copyBtn">Copy</button>
+            <button class="btn btn-g mini" onclick="reopen()">Change</button>
+          </div>
+          <div class="note" id="linkNote"></div>
         </div>
       </div>
     </div>
@@ -469,8 +480,7 @@ function show(txt){
   encode(txt).then(function(h){
     _hash=h;
     _full=location.origin+location.pathname+"#"+h;
-    setLink(_mode);          // full link is usable before the round trip finishes
-    publish();
+    reopen();                // ask before handing over anything
   });
   window.scrollTo(0,0);
 }
@@ -496,9 +506,8 @@ function reset(){
   el("out").classList.add("hide");el("sharebox").classList.add("hide");
   el("intake").classList.remove("hide");el("src").value="";
   el("kind").textContent="Report Viewer";el("kind").className="kind";
-  _hash="";_parsed=null;_full="";_short="";_code="";_vis="unlisted";
-  setVis("unlisted");
-  setLink("short");
+  _hash="";_parsed=null;_full="";_short="";_code="";_vis="unlisted";_mode="short";
+  reopen();
 }
 function copyShare(){
   var i=el("shareUrl");
@@ -549,23 +558,43 @@ var VIS_TEXT={
   "unlisted":"Only people you send the link to can open it. It stays out of the feeds."
 };
 
+/* Show the chooser. Also the "Change" path, so picking again after the fact goes
+   through exactly the same code. */
+function reopen(){
+  el("chooseBox").classList.remove("hide");
+  el("linkBox").classList.add("hide");
+  el("visNote").textContent="";
+  el("visPub").setAttribute("aria-pressed",String(_vis==="public"));
+  el("visUnl").setAttribute("aria-pressed",String(_vis==="unlisted"));
+}
+
 function setVis(v){
   _vis=v;
   el("visPub").setAttribute("aria-pressed",String(v==="public"));
   el("visUnl").setAttribute("aria-pressed",String(v==="unlisted"));
-  el("visNote").textContent=VIS_TEXT[v];
-  if(!_code)return;
-  // Edit the row that already exists rather than minting a second code - the
-  // first one may already have been sent to someone.
-  el("visNote").textContent="Updating…";
-  fetch(PUBLISH,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
-    body:JSON.stringify({action:"visibility",code:_code,visibility:v})})
-    .then(function(r){return r.json();})
-    .then(function(j){
-      if(!j||j.result!=="success")throw new Error((j&&j.msg)||"failed");
-      el("visNote").textContent=VIS_TEXT[v];
-    })
-    .catch(function(e){el("visNote").textContent="Could not change that ("+e.message+").";});
+
+  // Already published once - a change of mind edits that row rather than minting
+  // a second code for the same report.
+  if(_code){
+    el("visNote").textContent="Updating…";
+    fetch(PUBLISH,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({action:"visibility",code:_code,visibility:v})})
+      .then(function(r){return r.json();})
+      .then(function(j){
+        if(!j||j.result!=="success")throw new Error((j&&j.msg)||"failed");
+        showLink();
+      })
+      .catch(function(e){el("visNote").textContent="Could not change that ("+e.message+").";});
+    return;
+  }
+  el("visNote").textContent="Saving…";
+  publish();
+}
+
+function showLink(){
+  el("chooseBox").classList.add("hide");
+  el("linkBox").classList.remove("hide");
+  setLink(_short?_mode:"full");
 }
 
 function summarize(p){
@@ -624,17 +653,15 @@ function publish(){
     if(!j||j.result!=="success"||!j.code)throw new Error((j&&j.msg)||"no code returned");
     _code=j.code;
     _short=location.origin+"/"+j.code;
-    if(_mode==="short")setLink("short");
+    showLink();
   })
   .catch(function(e){
     // The full link needs no server at all, so a failed save costs the short
     // link and the archive row, not the ability to share.
-    _short="";
-    if(_mode==="short"){
-      setLink("full");
-      el("linkNote").innerHTML="Short links are unavailable right now ("+esc(e.message)+
-        "), so this is the full link. It works everywhere and never expires.";
-    }
+    _short="";_code="";
+    showLink();
+    el("linkNote").innerHTML="Short links are unavailable right now ("+esc(e.message)+
+      "), so this is the full link. It works everywhere and never expires.";
   });
 }
 function demo(){
@@ -646,8 +673,7 @@ function demo(){
     '</battleReport></reportData>';
   go();
 }
-setVis("unlisted");   // paint the default choice and its explanation
-setLink("short");
+reopen();   // chooser is the resting state; nothing is published until asked
 
 // A shared link carries the whole report in its fragment - decode and show it.
 (function(){
