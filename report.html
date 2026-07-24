@@ -58,8 +58,10 @@
   #intake{margin-top:26px}
   h1{font-size:clamp(22px,4vw,30px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:8px}
   .lead{color:var(--dim);font-size:14.5px;max-width:62ch;margin-bottom:20px}
-  textarea{width:100%;min-height:150px;background:#080b10;color:var(--txt);border:1px solid var(--border2);
-    border-radius:10px;padding:12px 13px;font-family:var(--mono);font-size:12px;line-height:1.5;resize:vertical}
+  /* Fixed height: what goes in here is usually one line, and a drag handle on a
+     box nobody needs to enlarge is just clutter. Long XML scrolls. */
+  textarea{width:100%;height:96px;background:#080b10;color:var(--txt);border:1px solid var(--border2);
+    border-radius:10px;padding:11px 13px;font-family:var(--mono);font-size:12px;line-height:1.5;resize:none}
   textarea:focus{outline:none;border-color:var(--grn);box-shadow:0 0 0 3px rgba(63,185,80,.12)}
   textarea::placeholder{color:var(--dim2)}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
@@ -124,17 +126,92 @@
   summary::before{content:"\25B8";margin-right:8px;color:var(--grn);display:inline-block;transition:transform .15s}
   details[open] summary::before{transform:rotate(90deg)}
 
-  .share{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px}
-  #shareUrl,#shortUrl{flex:1;min-width:220px;background:#080b10;border:1px solid var(--border2);border-radius:9px;
-    padding:9px 11px;font-family:var(--mono);font-size:11px;color:var(--dim)}
-  #shortUrl{color:var(--grn-b);font-size:13px}
+  /* ── The report sheet ────────────────────────────────────────────────────────
+     Players read these against the report the game itself shows, so the rendered
+     report drops the dark UI and becomes a parchment document laid on it: brown
+     ink, gold rule, a banner headline. Everything is scoped under #out, so the
+     page chrome around it stays dark and nothing else is disturbed.
+
+     Numbers keep the monospace face even here. The game uses a pixel font that
+     is period-correct and hard to read at four digits; columns that line up are
+     worth more than that last bit of fidelity. */
+  #out .panel{
+    --ink:#3a2a12; --ink2:#7a6440; --ink3:#9c885f;
+    --sheet:#efe3c4; --gold:#b8912f; --frame:#6d5220;
+    --loss:#9c2b21; --live:#3d6b2c;
+    background:
+      radial-gradient(900px 320px at 50% -10%,rgba(255,255,255,.30),transparent 62%),
+      repeating-linear-gradient(94deg,rgba(109,82,32,.035) 0 2px,transparent 2px 5px),
+      var(--sheet);
+    border:1px solid var(--frame);
+    border-radius:5px;
+    box-shadow:0 0 0 1px var(--gold) inset, 0 30px 62px -26px rgba(0,0,0,.9);
+    color:var(--ink);
+    font-family:Georgia,"Times New Roman",serif;
+  }
+  /* Banner: the dark bar the in-game report leads with. */
+  #out .outcome{
+    background:linear-gradient(180deg,#7d5f26,#5a4217);
+    border-bottom:2px solid var(--gold);
+    padding:19px 16px 16px;
+  }
+  #out .verdict{font-family:Georgia,"Times New Roman",serif;font-weight:700;
+    letter-spacing:.005em;text-shadow:0 2px 0 rgba(0,0,0,.4)}
+  #out .verdict.win{color:#ffd76a}
+  #out .verdict.loss{color:#ffbdae}
+  #out .vsub{font-family:Georgia,serif;color:#d6c396;letter-spacing:.1em;font-size:11.5px}
+  #out .stat{border-left-color:rgba(244,233,205,.22)}
+  #out .stat .v{font-family:Georgia,serif;color:#f4e9cd;font-weight:700}
+  #out .stat .l{font-family:Georgia,serif;color:#c3ad7d;letter-spacing:.13em}
+
+  #out .side{background:rgba(255,255,255,.34);border:1px solid rgba(109,82,32,.34);border-radius:3px}
+  #out .side-h{background:rgba(109,82,32,.11);border-bottom:1px solid rgba(109,82,32,.3)}
+  #out .side-role{font-family:Georgia,serif;font-weight:700}
+  #out .side.atk .side-role{color:#8f2b1f}
+  #out .side.def .side-role{color:#2f5b86}
+  #out .side-name{font-family:Georgia,serif;font-weight:700;color:var(--ink)}
+  #out .side-hero{font-family:Georgia,serif;color:var(--ink2)}
+
+  #out table{font-size:13px}
+  #out th{font-family:Georgia,serif;color:#5c4620;font-weight:700;letter-spacing:.09em;
+    background:rgba(109,82,32,.12);border-bottom:1px solid var(--gold)}
+  #out td{color:var(--ink);border-bottom:1px solid rgba(109,82,32,.15)}
+  #out td:first-child{font-family:Georgia,serif}
+  #out tr:nth-child(even) td{background:rgba(109,82,32,.045)}
+  #out .lose{color:var(--loss)} #out .keep{color:var(--live)} #out .z{color:var(--ink3)}
+  #out .tot td{border-top:1px solid var(--gold);background:rgba(109,82,32,.1);font-weight:700}
+  /* The banner sits on dark ground, so the ink-on-parchment reds and greens
+     above would disappear into it. These must stay after them to win. */
+  #out .outcome .lose{color:#ff9c8f} #out .outcome .keep{color:#a9e08b}
+
+  #out .cell{background:rgba(255,255,255,.34);border:1px solid rgba(109,82,32,.3)}
+  #out .cell .cv{font-family:Georgia,serif;font-weight:700;color:var(--ink)}
+  #out .cell .cl{font-family:Georgia,serif;color:var(--ink2);letter-spacing:.11em}
+
+  #out details{background:rgba(255,255,255,.3);border:1px solid rgba(109,82,32,.3);border-radius:3px}
+  #out summary{font-family:Georgia,serif;color:var(--ink2)}
+  #out summary:hover{color:var(--ink)}
+  #out summary::before{color:var(--gold)}
+
+  .share{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+  #shareUrl{flex:1;min-width:220px;background:#080b10;border:1px solid var(--border2);border-radius:9px;
+    padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--dim);
+    text-overflow:ellipsis;transition:color .15s,border-color .15s}
+  /* A short link is the thing worth reading, so it is allowed to look like it. */
+  #shareUrl.short{color:var(--grn-b);font-size:14.5px;letter-spacing:.02em;border-color:#2a4531}
+  .seg{display:inline-flex;border:1px solid var(--border2);border-radius:9px;overflow:hidden;margin-bottom:13px}
+  .seg button{font-family:var(--sans);font-size:12.5px;font-weight:700;padding:8px 17px;cursor:pointer;
+    background:transparent;border:0;color:var(--dim);transition:background .15s,color .15s}
+  .seg button[aria-selected="true"]{background:var(--panel2);color:var(--grn-b)}
+  .seg button:focus-visible{outline:2px solid var(--grn);outline-offset:-2px}
   .vis{display:flex;gap:0;border:1px solid var(--border2);border-radius:9px;overflow:hidden}
-  .vis button{font-family:var(--sans);font-size:12px;font-weight:600;padding:8px 14px;cursor:pointer;
+  .vis button{font-family:var(--sans);font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;
     background:transparent;border:0;color:var(--dim);transition:background .15s,color .15s}
   .vis button[aria-pressed="true"]{background:var(--panel2);color:var(--grn-b)}
   .vis button:focus-visible{outline:2px solid var(--grn);outline-offset:-2px}
-  .sep{height:1px;background:var(--border);margin:14px 0}
-  .vlabel{font-size:12px;color:var(--dim);margin-right:2px}
+  .vlabel{font-size:12px;color:var(--dim)}
+  .btn.mini{padding:5px 12px;font-size:11.5px;font-weight:600}
+  #shortCtl{margin-top:13px;padding-top:13px;border-top:1px solid var(--border)}
   footer{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim2);
     letter-spacing:.06em;margin-top:34px;padding-top:18px;border-top:1px solid var(--border)}
   .hide{display:none!important}
@@ -166,32 +243,41 @@
 
   <section id="out" class="hide"></section>
 
+  <!-- One link field, one Copy button, and a tab that picks which kind of link
+       goes in it. The old version stacked two link rows and two notes, which
+       made the reader work out which of the two they were meant to send. -->
   <section id="sharebox" class="hide">
-    <div class="panel" style="margin-top:14px"><div class="p-top"><span class="p-t">share this report</span></div><div class="p-b">
-      <div class="share">
-        <input id="shareUrl" readonly>
-        <button class="btn btn-p" onclick="copyShare()" id="copyBtn">Copy link</button>
-        <button class="btn btn-g" onclick="reset()">New report</button>
+    <div class="panel" style="margin-top:14px">
+      <div class="p-top">
+        <span class="p-t">share this report</span>
+        <span class="sp"></span>
+        <button class="btn btn-g mini" onclick="reset()">New report</button>
       </div>
-      <div class="note">Anyone with this link sees the same report &mdash; no account, no app, works in any browser. The link never expires because the report is encoded inside it.</div>
-
-      <div class="sep"></div>
-
-      <div class="share" style="margin-top:0">
-        <span class="vlabel">Short link:</span>
-        <div class="vis" role="group" aria-label="Who can find this report">
-          <button type="button" id="visPub" aria-pressed="false" onclick="setVis('public')">Public</button>
-          <button type="button" id="visUnl" aria-pressed="true"  onclick="setVis('unlisted')">Unlisted</button>
+      <div class="p-b">
+        <div class="seg" role="tablist" aria-label="Link type">
+          <button role="tab" id="lkFull"  aria-selected="true"  onclick="setLink('full')">Full link</button>
+          <button role="tab" id="lkShort" aria-selected="false" onclick="setLink('short')">Short link</button>
         </div>
-        <button class="btn btn-g" id="shortBtn" onclick="makeShort()">Create short link</button>
-      </div>
-      <div class="note" id="visNote"></div>
 
-      <div class="share hide" id="shortRow">
-        <input id="shortUrl" readonly>
-        <button class="btn btn-p" onclick="copyShort()" id="copyShortBtn">Copy</button>
+        <div class="share">
+          <input id="shareUrl" readonly aria-label="Share link">
+          <button class="btn btn-p" onclick="copyShare()" id="copyBtn">Copy</button>
+        </div>
+        <div class="note" id="linkNote"></div>
+
+        <div id="shortCtl" class="hide">
+          <div class="share">
+            <span class="vlabel">Who can find it</span>
+            <div class="vis" role="group" aria-label="Visibility">
+              <button type="button" id="visPub" aria-pressed="false" onclick="setVis('public')">Public</button>
+              <button type="button" id="visUnl" aria-pressed="true"  onclick="setVis('unlisted')">Unlisted</button>
+            </div>
+            <button class="btn btn-g" id="shortBtn" onclick="makeShort()">Create</button>
+          </div>
+          <div class="note" id="visNote"></div>
+        </div>
       </div>
-    </div></div>
+    </div>
   </section>
 
   <footer>OPTiC ACCOUNT MONITOR &middot; REPORT VIEWER</footer>
@@ -372,7 +458,8 @@ function show(txt){
   _parsed=p;
   encode(txt).then(function(h){
     _hash=h;
-    el("shareUrl").value=location.origin+location.pathname+"#"+h;
+    _full=location.origin+location.pathname+"#"+h;
+    if(_mode==="full")el("shareUrl").value=_full;
   });
   window.scrollTo(0,0);
 }
@@ -398,15 +485,47 @@ function reset(){
   el("out").classList.add("hide");el("sharebox").classList.add("hide");
   el("intake").classList.remove("hide");el("src").value="";
   el("kind").textContent="Report Viewer";el("kind").className="kind";
-  _hash="";_parsed=null;
+  _hash="";_parsed=null;_full="";_short="";
   setVis("unlisted");
+  setLink("full");
 }
 function copyShare(){
-  var i=el("shareUrl");i.select();
+  var i=el("shareUrl");
+  if(!i.value)return;
+  i.select();
   var ok=false;
   try{ok=document.execCommand("copy");}catch(e){}
   if(navigator.clipboard&&!ok)navigator.clipboard.writeText(i.value).catch(function(){});
-  var b=el("copyBtn"),t=b.textContent;b.textContent="Copied";setTimeout(function(){b.textContent=t;},1400);
+  var b=el("copyBtn");b.textContent="Copied";setTimeout(function(){b.textContent="Copy";},1400);
+}
+
+/* ---- which link is in the box ---------------------------------------------
+   Full and short are two answers to the same question, so they share one field
+   and one Copy button instead of stacking two rows the reader has to choose
+   between. Full is the default: it needs no server and cannot rot.          */
+var _mode="full", _short="";
+
+function setLink(mode){
+  _mode=mode;
+  el("lkFull").setAttribute("aria-selected",String(mode==="full"));
+  el("lkShort").setAttribute("aria-selected",String(mode==="short"));
+  el("shortCtl").classList.toggle("hide",mode!=="short");
+  el("copyBtn").textContent="Copy";
+  var f=el("shareUrl");
+
+  if(mode==="full"){
+    f.classList.remove("short");
+    f.value=_full;
+    el("linkNote").innerHTML="Opens in any browser, no account needed, and never expires &mdash; "+
+      "the whole report is encoded inside the link itself.";
+    return;
+  }
+  f.classList.add("short");
+  f.value=_short;
+  el("linkNote").innerHTML=_short
+    ? "Short and tidy. It looks the report up when opened, so it needs this site to be online &mdash; "+
+      "the full link above keeps working either way."
+    : "Choose who can find it, then create the link.";
 }
 
 /* ---------- short links ------------------------------------------------------
@@ -414,7 +533,7 @@ function copyShare(){
    whatever happens to this one. A short link is the convenience layer on top:
    it costs a lookup, so it is opt-in rather than the default.                  */
 var PUBLISH="https://script.google.com/macros/s/AKfycbxpZH6yPQIOWFHsixIKf9JMvjHRxbmgNiZ2cBLUbskXu7cnMoj79qOu_3YzNtrY9pHKsw/exec";
-var _vis="unlisted", _hash="", _parsed=null;
+var _vis="unlisted", _hash="", _parsed=null, _full="";
 
 var VIS_TEXT={
   "public":  "Anyone can find this in Reports of the Day and Reports of the Week.",
@@ -426,11 +545,13 @@ function setVis(v){
   el("visPub").setAttribute("aria-pressed",String(v==="public"));
   el("visUnl").setAttribute("aria-pressed",String(v==="unlisted"));
   el("visNote").textContent=VIS_TEXT[v];
-  // Visibility is baked in when the code is minted, so an existing short link
-  // does not silently change meaning underneath the person who already shared it.
-  el("shortRow").classList.add("hide");
-  el("shortBtn").textContent="Create short link";
+  // Visibility is baked in when the code is minted, so changing it discards the
+  // old link rather than silently changing what it means for whoever already
+  // has it.
+  _short="";
+  el("shortBtn").textContent="Create";
   el("shortBtn").disabled=false;
+  if(_mode==="short")setLink("short");
 }
 
 function summarize(p){
@@ -469,7 +590,7 @@ function summarize(p){
 function makeShort(){
   var b=el("shortBtn");
   if(!PUBLISH){
-    el("visNote").textContent="Short links are not switched on yet — the long link above works now and always will.";
+    el("visNote").textContent="Short links are not switched on yet — the full link works now and always will.";
     return;
   }
   if(!_hash||!_parsed){el("visNote").textContent="Still encoding the report — try again in a second.";return;}
@@ -489,22 +610,14 @@ function makeShort(){
   .then(function(r){return r.json();})
   .then(function(j){
     if(!j||j.result!=="success"||!j.code)throw new Error((j&&j.msg)||"no code returned");
-    el("shortUrl").value=location.origin+"/"+j.code;
-    el("shortRow").classList.remove("hide");
+    _short=location.origin+"/"+j.code;
     b.textContent="Created";
+    setLink("short");           // drop it straight into the field, ready to copy
   })
   .catch(function(e){
-    b.disabled=false;b.textContent="Create short link";
-    el("visNote").textContent="Could not create a short link ("+e.message+"). The long link above still works.";
+    b.disabled=false;b.textContent="Create";
+    el("visNote").textContent="Could not create a short link ("+e.message+"). The full link still works.";
   });
-}
-
-function copyShort(){
-  var i=el("shortUrl");i.select();
-  var ok=false;
-  try{ok=document.execCommand("copy");}catch(e){}
-  if(navigator.clipboard&&!ok)navigator.clipboard.writeText(i.value).catch(function(){});
-  var b=el("copyShortBtn");b.textContent="Copied";setTimeout(function(){b.textContent="Copy";},1400);
 }
 function demo(){
   el("src").value='<reportData><battleReport isAttack="false" isAttackSuccess="false" round="8" injuredPer="13" honor="-201067">'+
@@ -516,6 +629,7 @@ function demo(){
   go();
 }
 setVis("unlisted");   // paint the default choice and its explanation
+setLink("full");
 
 // A shared link carries the whole report in its fragment - decode and show it.
 (function(){
