@@ -1,6 +1,6 @@
 {
-    "version":  "1.33.2",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.33.2.exe",
-    "notes":  "Fixed: the bot list pop-out would not open (error 0x8007139F) after the 1.33.1 background fix.\\nScout alerts no longer fire when YOU scout someone - only a scout landing on one of your own cities raises an alert.\\nNew: post \"fleet me\" in alliance chat and a chosen account applies 2 Fleet Feet automatically. Set it up under Settings, then Configuration, then Fleet Feet.\\nScript version tags now read the version straight from the script file, so Radius Scout and Map Scanner show the right number.",
-    "mandatory":  false
+    "version":  "1.33.3",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.33.3.exe",
+    "notes":  "Update notices now reach you WITHOUT restarting. OPTiC checks every 15 minutes and raises the notice while you are working, once per release.\\nFixed: while an update was waiting, OPTiC re-downloaded the whole 50 MB installer on every check. It now keeps the copy it already has.\\nThis release is marked required so everyone lands on the new notification logic - after this, updates will reach you on their own.",
+    "mandatory":  true
 }
