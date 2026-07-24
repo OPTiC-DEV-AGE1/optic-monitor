@@ -58,13 +58,23 @@
   @keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
   @media (prefers-reduced-motion:reduce){.dot{animation:none;opacity:.7}}
 </style>
+<!-- Both the eyebrow and the message start hidden so a share link never flashes
+     "Error 404" on its way to resolving. With no JS neither would ever appear,
+     which would leave a blank page - so put them back. -->
+<noscript><style>
+  #eyebrow{visibility:visible!important}
+  #gone{display:block!important}
+</style></noscript>
 </head>
 <body>
 <div class="wrap">
-  <div class="code">Error 404</div>
+  <!-- Hidden to start. A short link is the ordinary reason to be on this page,
+       and flashing "Error 404" at someone whose link is about to work fine reads
+       as a broken site. Revealed only once a genuine 404 is established. -->
+  <div class="code" id="eyebrow" style="visibility:hidden">Error 404</div>
   <div class="card">
     <div id="resolving" class="lookup"><span class="dot"></span>Looking up share link&hellip;</div>
-    <div id="gone">
+    <div id="gone" style="display:none">
       <h1>That page isn&rsquo;t here</h1>
       <p>Nothing is served at <span class="path" id="path"></span>.</p>
       <p>If you followed a share link, it may have been mistyped &mdash; share
@@ -95,17 +105,18 @@
   var pathEl = document.getElementById("path");
   if (pathEl) pathEl.textContent = location.pathname;
 
-  if (!RESOLVER || !CODE.test(code)) return;
-
-  // Only swap to the "looking up" state once we are actually looking something
-  // up, so a genuine 404 never flashes a spinner it will not resolve.
-  document.getElementById("gone").style.display = "none";
-  document.getElementById("resolving").className = "lookup on";
-
   function fail(){
     document.getElementById("resolving").className = "lookup";
     document.getElementById("gone").style.display = "";
+    document.getElementById("eyebrow").style.visibility = "visible";
   }
+
+  // Nothing that looks like a share code: this really is a 404, say so at once.
+  if (!RESOLVER || !CODE.test(code)) { fail(); return; }
+
+  // Otherwise show only the spinner. The eyebrow stays hidden until the lookup
+  // has actually failed.
+  document.getElementById("resolving").className = "lookup on";
 
   fetch(RESOLVER + "?r=" + encodeURIComponent(code), {cache:"no-store"})
     .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })

@@ -181,7 +181,8 @@
   #out .gr-lost{margin-left:auto;color:var(--loss);font-weight:700}
   #out .gr-hero{display:flex;align-items:center;gap:9px;padding:10px 12px;
     border-bottom:1px solid var(--rule);font-size:14px}
-  #out .gr-face{width:32px;height:32px;border-radius:3px;flex-shrink:0;display:grid;place-items:center;
+  #out .gr-face img{width:100%;height:100%;object-fit:cover;display:block}
+  #out .gr-face{width:32px;height:32px;border-radius:3px;flex-shrink:0;display:grid;place-items:center;overflow:hidden;
     background:linear-gradient(180deg,#e8e0c2,#d6cba4);border:1px solid var(--frame);
     font-weight:700;font-size:15px;color:#5d5638}
   #out .gr-lvl{color:var(--ink2)}
@@ -262,12 +263,9 @@
   footer{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim2);
     letter-spacing:.06em;margin-top:34px;padding-top:18px;border-top:1px solid var(--border)}
   .hide{display:none!important}
-  .empty{text-align:center;padding:44px 20px 8px}
-  .empty-mark{width:66px;height:66px;margin:0 auto 16px;border-radius:19px;display:grid;place-items:center;
-    background:linear-gradient(150deg,#132417,#0c1a10);border:1px solid #234d2c;position:relative;
-    box-shadow:0 12px 34px -14px rgba(63,185,80,.55)}
-  .empty-mark::before{content:"";width:20px;height:20px;border-radius:50%;background:var(--grn-b);
-    box-shadow:0 0 26px var(--grn-b),0 0 6px #fff inset}
+  /* No mark here - the page already leads with one next to the title, and a
+     second directly below it read as a duplicate rather than a flourish. */
+  .empty{text-align:center;padding:40px 20px 8px}
   .empty-t{font-size:16px;font-weight:800;letter-spacing:-.01em}
   .empty-s{font-size:12.5px;color:var(--dim);margin:6px auto 0;max-width:50ch;line-height:1.65}
   .empty-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px}
@@ -310,7 +308,6 @@
     <!-- The page was a headline and an empty box before this. It lives inside
          #intake so it disappears with it the moment a report renders. -->
     <div class="empty">
-      <div class="empty-mark"></div>
       <div class="empty-t">Your report will appear here</div>
       <div class="empty-s">Paste a battle or scout report link above &mdash; it gets fetched, laid out
         the way the game does, and given a short link anyone can open.</div>
@@ -367,6 +364,9 @@
   </section>
 
   <footer>OPTiC ACCOUNT MONITOR &middot; REPORT VIEWER</footer>
+<!-- Loaded before the viewer script so face() can see it. Separate file, not
+     inlined: it is 118KB and never changes, so the browser caches it once. -->
+<script src="/faces.js"></script>
 </div>
 
 <script>
@@ -426,6 +426,17 @@ function units(nodes,countAttr,loseAttr){
 }
 
 /* ---------- render: battle ---------- */
+/* The hero portrait the game itself shows. It cannot be hotlinked here: the game
+   serves it over plain http and has no https at all, so the browser blocks it as
+   mixed content. faces.js carries the 33 portraits inlined instead. Falls back to
+   the hero's initial when the face is one we did not harvest. */
+function face(heroUrl,heroName){
+  var key=String(heroUrl||"").split("/").pop().replace(/\.[a-z]+$/i,"");
+  var src=(window.EVONY_FACES||{})[key];
+  if(src)return "<span class='gr-face'><img src='"+src+"' alt=''></span>";
+  return "<span class='gr-face'>"+esc((heroName||"?").charAt(0).toUpperCase())+"</span>";
+}
+
 /* Laid out the way the game lays it out: two army columns of Troop / Amount /
    Casualty, then the run of summary lines underneath, then what was plundered.
    "Amount" rather than Sent/In Town because that is the game's own word, and it
@@ -460,7 +471,7 @@ function battle(doc){
       "<div class='gr-sh'><b>"+role+"</b><span class='gr-dim'>"+whose+"</span>"+
         "<span class='gr-king'>"+esc(king||"Unknown")+"</span>"+
         "<span class='"+(won?"gr-win":"gr-lost")+"'>"+(won?"Victory":"Defeat")+"</span></div>"+
-      "<div class='gr-hero'><span class='gr-face'>"+esc((hero||"?").charAt(0).toUpperCase())+"</span>"+
+      "<div class='gr-hero'>"+face(node&&node.getAttribute("heroUrl"),hero)+
         "<span><b>"+esc(hero||"Unknown")+"</b>"+
         (lvl?" <span class='gr-lvl'>(Level "+esc(lvl)+")</span>":"")+"</span></div>"+
       "<div class='gr-tw'><table class='gr-t'>"+
