@@ -86,7 +86,7 @@
    RESOLVER is the lookup endpoint. While it is empty this page is a plain 404
    and nothing below runs, so shipping it early costs nothing.               */
 (function(){
-  var RESOLVER = "";                 // set to the Apps Script /exec URL
+  var RESOLVER = "https://script.google.com/macros/s/AKfycbxpZH6yPQIOWFHsixIKf9JMvjHRxbmgNiZ2cBLUbskXu7cnMoj79qOu_3YzNtrY9pHKsw/exec";
   var CODE = /^[A-Za-z0-9]{5,12}$/;  // what a short code looks like
 
   var raw  = location.pathname.replace(/^\/+|\/+$/g, "");
