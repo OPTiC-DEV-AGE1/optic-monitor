@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Paste an Evony scout or battle report and get it back readable - then share it with a link that opens in any browser.">
+<meta name="theme-color" content="#0a0d13">
+<meta property="og:type" content="website">
+<meta property="og:title" content="OPTiC Report Viewer">
+<meta property="og:description" content="Evony scout and battle reports, readable and shareable. The whole report travels inside the link.">
+<title>OPTiC Report Viewer</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0d13; --panel:#111823; --panel2:#0e141d; --bg2:#0d1119;
+    --border:#222c38; --border2:#2c3846;
+    --txt:#e9eef5; --dim:#8b98a8; --dim2:#5c6775;
+    --grn:#3fb950; --grn-b:#57e06a; --gold:#f5c518;
+    --red:#f85149; --amber:#d29922; --blue:#58a6ff; --purple:#bc8cff;
+    --mono:"Cascadia Code","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  body{background:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased;padding:0 0 60px;
+    background-image:radial-gradient(1100px 520px at 80% -12%,rgba(63,185,80,.09),transparent 60%),
+                     radial-gradient(820px 460px at 0% 6%,rgba(245,197,24,.05),transparent 55%);
+    background-attachment:fixed}
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+  .num{font-variant-numeric:tabular-nums;font-family:var(--mono)}
+  .mono{font-family:var(--mono)}
+
+  header{border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(10,13,19,.95),rgba(10,13,19,.6));
+    backdrop-filter:blur(8px);position:sticky;top:0;z-index:20}
+  .bar{display:flex;align-items:center;gap:12px;height:56px}
+  .logo{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;
+    background:linear-gradient(150deg,#132417,#0c1a10);border:1px solid #234d2c;position:relative}
+  .logo::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--grn-b);
+    box-shadow:0 0 10px var(--grn-b),0 0 3px #fff inset}
+  .brand{font-weight:900;letter-spacing:.14em;font-size:14px}
+  .sp{flex:1}
+  .kind{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    padding:4px 10px;border-radius:100px;border:1px solid var(--border2);color:var(--dim)}
+  .kind.scout{color:var(--blue);border-color:rgba(88,166,255,.4);background:rgba(88,166,255,.08)}
+  .kind.battle{color:var(--red);border-color:rgba(248,81,73,.4);background:rgba(248,81,73,.08)}
+
+  .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border2);
+    border-radius:13px;overflow:hidden;box-shadow:0 24px 50px -30px rgba(0,0,0,.8)}
+  .p-top{display:flex;align-items:center;gap:9px;padding:11px 15px;border-bottom:1px solid var(--border);
+    background:rgba(255,255,255,.015)}
+  .p-t{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim)}
+  .p-b{padding:16px}
+
+  /* intake */
+  #intake{margin-top:26px}
+  h1{font-size:clamp(22px,4vw,30px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:8px}
+  .lead{color:var(--dim);font-size:14.5px;max-width:62ch;margin-bottom:20px}
+  textarea{width:100%;min-height:150px;background:#080b10;color:var(--txt);border:1px solid var(--border2);
+    border-radius:10px;padding:12px 13px;font-family:var(--mono);font-size:12px;line-height:1.5;resize:vertical}
+  textarea:focus{outline:none;border-color:var(--grn);box-shadow:0 0 0 3px rgba(63,185,80,.12)}
+  textarea::placeholder{color:var(--dim2)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .btn{font-family:var(--sans);font-weight:700;font-size:13px;border-radius:9px;cursor:pointer;border:1px solid transparent;
+    padding:9px 16px;display:inline-flex;align-items:center;gap:7px;text-decoration:none;transition:transform .1s,box-shadow .2s,background .2s}
+  .btn:active{transform:translateY(1px)}
+  .btn-p{background:linear-gradient(180deg,var(--grn-b),var(--grn));color:#06210c;box-shadow:0 6px 20px -8px rgba(63,185,80,.7)}
+  .btn-g{background:var(--panel);color:var(--txt);border-color:var(--border2)}
+  .btn-g:hover{border-color:var(--grn);color:var(--grn-b)}
+  .note{font-size:12px;color:var(--dim);margin-top:10px}
+  .warn{border:1px solid rgba(210,153,34,.35);background:rgba(210,153,34,.07);border-radius:10px;
+    padding:11px 13px;font-size:12.5px;color:#e8d9b0;margin-top:12px;display:none}
+  .warn b{color:var(--amber)}
+  .warn a{color:var(--blue);word-break:break-all}
+
+  /* outcome */
+  .outcome{text-align:center;padding:22px 16px 20px;border-bottom:1px solid var(--border)}
+  .verdict{font-size:clamp(20px,4vw,28px);font-weight:800;letter-spacing:-.01em}
+  .verdict.win{color:var(--grn-b)} .verdict.loss{color:var(--red)}
+  .vsub{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;margin-top:5px;text-transform:uppercase}
+  .stats{display:flex;gap:0;flex-wrap:wrap;justify-content:center;margin-top:16px}
+  .stat{padding:0 18px;text-align:center;border-left:1px solid var(--border)}
+  .stat:first-child{border-left:none}
+  .stat .v{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+  .stat .l{font-family:var(--mono);font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
+
+  /* combatants */
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px}
+  @media(max-width:700px){.vs{grid-template-columns:1fr}}
+  .side{background:var(--bg2);border:1px solid var(--border);border-radius:11px;overflow:hidden}
+  .side-h{padding:11px 13px;border-bottom:1px solid var(--border)}
+  .side-role{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase}
+  .side.atk .side-role{color:var(--red)} .side.def .side-role{color:var(--blue)}
+  .side-name{font-size:16px;font-weight:800;margin-top:2px;word-break:break-word}
+  .side-hero{font-size:11.5px;color:var(--dim);margin-top:3px;font-family:var(--mono)}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{font-family:var(--mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim2);
+    text-align:right;padding:7px 10px;border-bottom:1px solid var(--border);font-weight:600}
+  th:first-child{text-align:left}
+  td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.035);text-align:right;
+    font-variant-numeric:tabular-nums;font-family:var(--mono)}
+  td:first-child{text-align:left;font-family:var(--sans)}
+  tr:last-child td{border-bottom:none}
+  .tw{overflow-x:auto}
+  .lose{color:var(--red)} .keep{color:var(--grn-b)} .z{color:var(--dim2)}
+  .tot td{border-top:1px solid var(--border2);font-weight:800;background:rgba(255,255,255,.02)}
+
+  /* scout grids */
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;padding:16px 16px 4px}
+  @media(max-width:620px){.grid4{grid-template-columns:repeat(2,1fr)}}
+  .cell{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:11px}
+  .cell .cv{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+  .cell .cl{font-family:var(--mono);font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-top:3px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px}
+  @media(max-width:700px){.two{grid-template-columns:1fr}}
+
+  details{margin:0 16px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:11px;overflow:hidden}
+  summary{padding:11px 13px;cursor:pointer;font-size:12.5px;font-weight:700;list-style:none;color:var(--dim)}
+  summary::-webkit-details-marker{display:none}
+  summary:hover{color:var(--txt)}
+  summary::before{content:"\25B8";margin-right:8px;color:var(--grn);display:inline-block;transition:transform .15s}
+  details[open] summary::before{transform:rotate(90deg)}
+
+  .share{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px}
+  #shareUrl{flex:1;min-width:220px;background:#080b10;border:1px solid var(--border2);border-radius:9px;
+    padding:9px 11px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+  footer{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim2);
+    letter-spacing:.06em;margin-top:34px;padding-top:18px;border-top:1px solid var(--border)}
+  .hide{display:none!important}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <span class="logo"></span><span class="brand">OPTiC</span>
+  <span class="sp"></span>
+  <span class="kind" id="kind">Report Viewer</span>
+</div></header>
+
+<div class="wrap">
+
+  <section id="intake">
+    <h1>Evony Report Viewer</h1>
+    <p class="lead">Paste a scout or battle report and get it back readable &mdash; then share it with a link that opens in any browser. Nothing is uploaded: the whole report travels inside the link itself.</p>
+    <div class="panel"><div class="p-top"><span class="p-t">paste report</span></div><div class="p-b">
+      <textarea id="src" spellcheck="false" placeholder="Paste the report XML here&#10;&#10;(starts with  &lt;reportData ... &gt;)"></textarea>
+      <div class="row">
+        <button class="btn btn-p" onclick="go()">Render report</button>
+        <button class="btn btn-g" onclick="demo()">Load an example</button>
+      </div>
+      <div class="warn" id="warn"></div>
+      <div class="note">Tip: opening a report link in your browser shows the raw XML &mdash; select all, copy, and paste it above.</div>
+    </div></div>
+  </section>
+
+  <section id="out" class="hide"></section>
+
+  <section id="sharebox" class="hide">
+    <div class="panel" style="margin-top:14px"><div class="p-top"><span class="p-t">share this report</span></div><div class="p-b">
+      <div class="share">
+        <input id="shareUrl" readonly>
+        <button class="btn btn-p" onclick="copyShare()" id="copyBtn">Copy link</button>
+        <button class="btn btn-g" onclick="reset()">New report</button>
+      </div>
+      <div class="note">Anyone with this link sees the same report &mdash; no account, no app, works in any browser. The link never expires because the report is encoded inside it.</div>
+    </div></div>
+  </section>
+
+  <footer>OPTiC ACCOUNT MONITOR &middot; REPORT VIEWER</footer>
+</div>
+
+<script>
+// typeId map - identical across scout and battle reports. 2-13 are troops,
+// 14-18 fortifications. 8/9/10 verified against live reports as transport /
+// cavalry / cataphract (they are easy to get backwards).
+var UNIT={0:"—",1:"—",2:"Worker",3:"Warrior",4:"Scout",5:"Pikeman",6:"Swordsman",
+  7:"Archer",8:"Transport",9:"Cavalry",10:"Cataphract",11:"Ballista",12:"Battering Ram",
+  13:"Catapult",14:"Trap",15:"Abatis",16:"Archer Tower",17:"Rolling Log",18:"Trebuchet"};
+var FORT_MIN=14;
+function nm(id){return UNIT[id]||("Type "+id);}
+function n(v){v=Number(v)||0;return v.toLocaleString();}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function el(id){return document.getElementById(id);}
+
+/* ---------- share encoding: the report rides in the URL fragment ---------- */
+function b64url(bytes){var s="";for(var i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);
+  return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function unb64url(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";
+  var bin=atob(s),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return a;}
+async function encode(txt){
+  // deflate-raw keeps links short; fall back to plain base64 where unsupported.
+  if(window.CompressionStream){try{
+    var cs=new CompressionStream("deflate-raw"),w=cs.writable.getWriter();
+    w.write(new TextEncoder().encode(txt));w.close();
+    var buf=await new Response(cs.readable).arrayBuffer();
+    return "z"+b64url(new Uint8Array(buf));
+  }catch(e){}}
+  return "r"+b64url(new TextEncoder().encode(txt));
+}
+async function decode(h){
+  var mode=h.charAt(0),body=unb64url(h.slice(1));
+  if(mode==="z"){
+    var ds=new DecompressionStream("deflate-raw"),w=ds.writable.getWriter();
+    w.write(body);w.close();
+    return new TextDecoder().decode(await new Response(ds.readable).arrayBuffer());
+  }
+  return new TextDecoder().decode(body);
+}
+
+/* ---------- parse ---------- */
+function parse(txt){
+  var doc=new DOMParser().parseFromString(txt.trim(),"text/xml");
+  if(doc.querySelector("parsererror"))throw new Error("That does not look like report XML.");
+  if(doc.querySelector("battleReport"))return {type:"battle",doc:doc};
+  if(doc.querySelector("scoutReport")||doc.querySelector("scoutInfo"))return {type:"scout",doc:doc};
+  throw new Error("No scout or battle report found in that XML.");
+}
+function units(nodes,countAttr,loseAttr){
+  var out=[];for(var i=0;i<nodes.length;i++){var e=nodes[i];
+    var id=parseInt(e.getAttribute("typeId"),10);
+    var c=Number(e.getAttribute(countAttr))||0;
+    var l=loseAttr?(Number(e.getAttribute(loseAttr))||0):0;
+    if(!c&&!l)continue;
+    out.push({id:id,name:nm(id),count:c,lose:l,fort:id>=FORT_MIN});}
+  return out;
+}
+
+/* ---------- render: battle ---------- */
+function battle(doc){
+  var br=doc.querySelector("battleReport");
+  var win=br.getAttribute("isAttackSuccess")==="true";
+  var rounds=br.getAttribute("round")||"?";
+  var honor=Number(br.getAttribute("honor"))||0;
+  var inj=br.getAttribute("injuredPer");
+  var at=doc.querySelector("attackTroop"),df=doc.querySelector("defendTroop");
+  var aU=units(at?at.querySelectorAll("troopUnit"):[],"count","lose");
+  var dU=units(df?df.querySelectorAll("troopUnit"):[],"count","lose");
+  var back=doc.querySelectorAll("backTroop troopInfo");
+
+  function sideHtml(node,list,role,cls){
+    var king=node?node.getAttribute("king"):null;
+    var hero=node?node.getAttribute("heroName"):null;
+    var lvl=node?node.getAttribute("heroLevel"):null;
+    var sent=0,lost=0;
+    list.forEach(function(u){sent+=u.count;lost+=u.lose;});
+    var rows=list.map(function(u){
+      var surv=u.count-u.lose;
+      return "<tr><td>"+esc(u.name)+(u.fort?" <span class='z'>fort</span>":"")+"</td>"+
+        "<td>"+n(u.count)+"</td>"+
+        "<td class='"+(u.lose?"lose":"z")+"'>"+(u.lose?"-"+n(u.lose):"0")+"</td>"+
+        "<td class='"+(surv>0?"keep":"z")+"'>"+n(surv)+"</td></tr>";}).join("");
+    if(!rows)rows="<tr><td colspan='4' class='z'>Nothing recorded</td></tr>";
+    var totals=list.length>1?("<tr class='tot'><td>Total</td><td>"+n(sent)+"</td><td class='lose'>-"+n(lost)+
+      "</td><td class='keep'>"+n(sent-lost)+"</td></tr>"):"";
+    return "<div class='side "+cls+"'><div class='side-h'>"+
+      "<div class='side-role'>"+role+"</div>"+
+      "<div class='side-name'>"+esc(king||"Unknown")+"</div>"+
+      (hero?"<div class='side-hero'>"+esc(hero)+(lvl?" &middot; level "+esc(lvl):"")+"</div>":"")+
+      "</div><div class='tw'><table><tr><th>Unit</th><th>Sent</th><th>Lost</th><th>Left</th></tr>"+
+      rows+totals+"</table></div></div>";
+  }
+
+  var backRows=[];
+  for(var i=0;i<back.length;i++){
+    var id=parseInt(back[i].getAttribute("typeId"),10),r=Number(back[i].getAttribute("remain"))||0;
+    if(!r)continue;
+    backRows.push("<tr><td>"+esc(nm(id))+(id>=FORT_MIN?" <span class='z'>fort</span>":"")+"</td><td>"+n(r)+"</td></tr>");
+  }
+
+  return "<div class='panel' style='margin-top:22px'>"+
+    "<div class='outcome'>"+
+      "<div class='verdict "+(win?"win":"loss")+"'>"+(win?"Attack succeeded":"Attack failed")+"</div>"+
+      "<div class='vsub'>"+(win?"the attacker broke through":"the defender held")+"</div>"+
+      "<div class='stats'>"+
+        "<div class='stat'><div class='v'>"+esc(rounds)+"</div><div class='l'>rounds</div></div>"+
+        "<div class='stat'><div class='v "+(honor<0?"lose":"keep")+"'>"+(honor>0?"+":"")+n(honor)+"</div><div class='l'>honor</div></div>"+
+        (inj?"<div class='stat'><div class='v'>"+esc(inj)+"%</div><div class='l'>injured</div></div>":"")+
+      "</div>"+
+    "</div>"+
+    "<div class='vs'>"+sideHtml(at,aU,"Attacker","atk")+sideHtml(df,dU,"Defender","def")+"</div>"+
+    (backRows.length?("<details><summary>Defender&rsquo;s surviving forces ("+backRows.length+" types)</summary>"+
+      "<div class='tw'><table><tr><th>Unit</th><th>Remaining</th></tr>"+backRows.join("")+"</table></div></details>"):"")+
+  "</div>";
+}
+
+/* ---------- render: scout ---------- */
+function scout(doc){
+  var si=doc.querySelector("scoutInfo");
+  var loy=si?Number(si.getAttribute("support")):null;
+  var gold=si?Number(si.getAttribute("gold")):0;
+  var pop=si?Number(si.getAttribute("population")):0;
+  function res(t){var e=doc.querySelector("resource > "+t);return e?Number(e.textContent)||0:0;}
+  var food=res("food"),wood=res("wood"),stone=res("stone"),iron=res("iron");
+  var tr=units(doc.querySelectorAll("troops troopStrType"),"count",null);
+  var ft=units(doc.querySelectorAll("fortifications fortificationsType"),"count",null);
+  var troopTotal=0;tr.forEach(function(u){troopTotal+=u.count;});
+
+  function tbl(list,label){
+    if(!list.length)return "<div class='side'><div class='side-h'><div class='side-role'>"+label+
+      "</div><div class='side-name' style='font-size:13px;color:var(--dim2)'>None</div></div></div>";
+    var rows=list.map(function(u){return "<tr><td>"+esc(u.name)+"</td><td>"+n(u.count)+"</td></tr>";}).join("");
+    var tot=0;list.forEach(function(u){tot+=u.count;});
+    return "<div class='side'><div class='side-h'><div class='side-role'>"+label+"</div>"+
+      "<div class='side-name'>"+n(tot)+"</div></div>"+
+      "<div class='tw'><table><tr><th>Unit</th><th>Count</th></tr>"+rows+"</table></div></div>";
+  }
+  var loyCls=loy==null?"":(loy<=30?"lose":(loy<=60?"":"keep"));
+
+  return "<div class='panel' style='margin-top:22px'>"+
+    "<div class='outcome'>"+
+      "<div class='verdict "+(troopTotal?"":"win")+"'>"+(troopTotal?n(troopTotal)+" troops defending":"Undefended")+"</div>"+
+      "<div class='vsub'>scout report</div>"+
+      "<div class='stats'>"+
+        (loy!=null?"<div class='stat'><div class='v "+loyCls+"'>"+n(loy)+"</div><div class='l'>loyalty</div></div>":"")+
+        "<div class='stat'><div class='v' style='color:var(--gold)'>"+n(gold)+"</div><div class='l'>gold</div></div>"+
+        (pop?"<div class='stat'><div class='v'>"+n(pop)+"</div><div class='l'>population</div></div>":"")+
+      "</div>"+
+    "</div>"+
+    "<div class='grid4'>"+
+      "<div class='cell'><div class='cv'>"+n(food)+"</div><div class='cl'>food</div></div>"+
+      "<div class='cell'><div class='cv'>"+n(wood)+"</div><div class='cl'>wood</div></div>"+
+      "<div class='cell'><div class='cv'>"+n(stone)+"</div><div class='cl'>stone</div></div>"+
+      "<div class='cell'><div class='cv'>"+n(iron)+"</div><div class='cl'>iron</div></div>"+
+    "</div>"+
+    "<div class='two'>"+tbl(tr,"Troops")+tbl(ft,"Fortifications")+"</div>"+
+  "</div>";
+}
+
+/* ---------- flow ---------- */
+var _raw="";
+function show(txt){
+  var p=parse(txt);
+  _raw=txt;
+  el("out").innerHTML=p.type==="battle"?battle(p.doc):scout(p.doc);
+  el("out").classList.remove("hide");
+  el("intake").classList.add("hide");
+  el("sharebox").classList.remove("hide");
+  var k=el("kind");
+  k.textContent=p.type==="battle"?"Battle Report":"Scout Report";
+  k.className="kind "+p.type;
+  encode(txt).then(function(h){
+    el("shareUrl").value=location.origin+location.pathname+"#"+h;
+  });
+  window.scrollTo(0,0);
+}
+function go(){
+  var v=el("src").value.trim();
+  var w=el("warn");w.style.display="none";
+  if(!v){w.innerHTML="<b>Nothing pasted.</b> Paste the report XML above.";w.style.display="block";return;}
+  // A pasted LINK cannot be fetched from here: the game serves reports over plain
+  // HTTP with no cross-origin access, so the browser blocks it outright. Point at
+  // the raw file instead so it can be opened and copied.
+  if(/^https?:\/\//i.test(v)||/evony\.com/i.test(v)){
+    var raw=v.replace(/^\s*/,"").replace(/default\.html\?/i,"");
+    if(!/^https?:\/\//i.test(raw))raw="http://"+raw;
+    w.innerHTML="<b>That is a link, not the report.</b> Your browser is not allowed to fetch it from here "+
+      "(the game serves reports over plain HTTP with no cross-origin access). "+
+      "<a href='"+esc(raw)+"' target='_blank' rel='noopener'>Open the raw XML &#8599;</a> then copy all of it and paste it above.";
+    w.style.display="block";return;
+  }
+  try{show(v);}catch(e){w.innerHTML="<b>Could not read that.</b> "+esc(e.message);w.style.display="block";}
+}
+function reset(){
+  location.hash="";
+  el("out").classList.add("hide");el("sharebox").classList.add("hide");
+  el("intake").classList.remove("hide");el("src").value="";
+  el("kind").textContent="Report Viewer";el("kind").className="kind";
+}
+function copyShare(){
+  var i=el("shareUrl");i.select();
+  var ok=false;
+  try{ok=document.execCommand("copy");}catch(e){}
+  if(navigator.clipboard&&!ok)navigator.clipboard.writeText(i.value).catch(function(){});
+  var b=el("copyBtn"),t=b.textContent;b.textContent="Copied";setTimeout(function(){b.textContent=t;},1400);
+}
+function demo(){
+  el("src").value='<reportData><battleReport isAttack="false" isAttackSuccess="false" round="8" injuredPer="13" honor="-201067">'+
+    '<attackTroop king="SilentStalker" heroName="B66" heroLevel="662"><troopUnit typeId="4" count="15000" lose="15000"/></attackTroop>'+
+    '<defendTroop king="Praying Mantis"><troopUnit typeId="18" count="7193" lose="5473"/><troopUnit typeId="15" count="1" lose="0"/></defendTroop>'+
+    '<backTroop><troops><troopInfo typeId="18" remain="6536"/><troopInfo typeId="7" remain="80331711"/>'+
+    '<troopInfo typeId="10" remain="18976027"/><troopInfo typeId="13" remain="12260987"/></troops></backTroop>'+
+    '</battleReport></reportData>';
+  go();
+}
+// A shared link carries the whole report in its fragment - decode and show it.
+(function(){
+  var h=location.hash.slice(1);
+  if(!h)return;
+  decode(h).then(function(txt){
+    try{show(txt);}catch(e){
+      el("warn").innerHTML="<b>That shared link could not be read.</b> "+esc(e.message);
+      el("warn").style.display="block";
+    }
+  }).catch(function(){
+    el("warn").innerHTML="<b>That shared link is damaged or incomplete.</b> It may have been cut short when it was copied.";
+    el("warn").style.display="block";
+  });
+})();
+</script>
+</body>
+</html>

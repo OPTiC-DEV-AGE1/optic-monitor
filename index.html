@@ -1,0 +1,983 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="OPTiC Account Monitor — one console for your whole Evony operation: live bot control, server-wide prestige and hero intel, deep scout reports, a battle calculator, and a tactical map that shows exactly who is worth hitting.">
+<meta name="theme-color" content="#0a0d13">
+<meta property="og:type" content="website">
+<meta property="og:title" content="OPTiC Account Monitor">
+<meta property="og:description" content="See the whole server. Run every account. Seventeen tools in one Windows console — accounts, cities, heroes, items, deep scouting intel, a battle calculator, a live tactical map, and full bot command.">
+<meta name="twitter:card" content="summary_large_image">
+<title>OPTiC Account Monitor</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0d13; --bg2:#0d1119; --panel:#111823; --panel2:#0e141d;
+    --line:#20293600; --border:#222c38; --border2:#2c3846;
+    --txt:#e9eef5; --dim:#8b98a8; --dim2:#5c6775;
+    --grn:#3fb950; --grn-b:#57e06a; --gold:#f5c518; --gold-d:#c9a012;
+    --red:#f85149; --amber:#d29922; --blue:#58a6ff;
+    --mono:"Cascadia Code","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--txt); font-family:var(--sans);
+    line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(63,185,80,.10), transparent 60%),
+      radial-gradient(900px 500px at 0% 8%, rgba(245,197,24,.06), transparent 55%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+  ::selection{background:rgba(63,185,80,.3)}
+
+  /* ---- type ---- */
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--grn);font-weight:600}
+  h1,h2,h3{font-weight:800;letter-spacing:-.02em;text-wrap:balance;line-height:1.05}
+  h1{font-size:clamp(34px,6.4vw,68px)}
+  h2{font-size:clamp(26px,4.2vw,42px)}
+  .lead{font-size:clamp(15px,2vw,19px);color:var(--dim);max-width:56ch}
+  .mono{font-family:var(--mono)}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* ---- top bar ---- */
+  header{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:linear-gradient(180deg,rgba(10,13,19,.92),rgba(10,13,19,.6));
+    border-bottom:1px solid var(--border)}
+  .bar{display:flex;align-items:center;gap:14px;height:58px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.14em;font-size:15px}
+  .logo{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;
+    background:linear-gradient(150deg,#132417,#0c1a10);border:1px solid #234d2c;position:relative;flex-shrink:0}
+  .logo::before{content:"";width:8px;height:8px;border-radius:50%;
+    background:var(--grn-b);box-shadow:0 0 10px var(--grn-b),0 0 3px #fff inset}
+  .brand b{background:linear-gradient(92deg,var(--txt) 10%,var(--grn-b) 50%,var(--txt) 90%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .barpill{font-family:var(--mono);font-size:11px;color:var(--grn);border:1px solid #234d2c;
+    background:rgba(63,185,80,.08);padding:3px 9px;border-radius:100px;letter-spacing:.05em}
+  .bar .sp{flex:1}
+  .btn{font-family:var(--sans);font-weight:700;font-size:13px;border-radius:9px;cursor:pointer;
+    text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:transform .12s,box-shadow .2s,background .2s;border:1px solid transparent}
+  .btn:active{transform:translateY(1px)}
+  .btn-p{background:linear-gradient(180deg,var(--grn-b),var(--grn));color:#06210c;padding:9px 16px;
+    box-shadow:0 6px 22px -8px rgba(63,185,80,.7)}
+  .btn-p:hover{box-shadow:0 10px 30px -8px rgba(63,185,80,.85)}
+  .btn-g{background:var(--panel);color:var(--txt);border-color:var(--border2);padding:9px 15px}
+  .btn-g:hover{border-color:var(--grn);color:var(--grn-b)}
+  @media(max-width:640px){.bar .btn-g{display:none}}
+
+  /* ---- hero ---- */
+  .hero{padding:64px 0 40px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:34px}}
+  .hero h1{margin:16px 0 20px}
+  .hero h1 .g{color:var(--gold)}
+  .hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px;align-items:center}
+  .relaunch{font-family:var(--mono);font-size:12px;color:var(--dim);display:flex;align-items:center;gap:7px}
+  .relaunch .dot{width:7px;height:7px;border-radius:50%;background:var(--grn-b);box-shadow:0 0 9px var(--grn-b)}
+
+  /* intel legend motif */
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:26px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+  /* ---- console panel ---- */
+  .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border2);
+    border-radius:14px;box-shadow:0 30px 60px -30px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.03) inset;overflow:hidden}
+  .panel-top{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--border);
+    background:rgba(255,255,255,.015)}
+  .panel-title{order:1;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase}
+  .panel-live{order:2;margin-left:12px;font-family:var(--mono);font-size:10px;color:var(--grn);display:flex;align-items:center;gap:6px;letter-spacing:.1em}
+  /* Windows-style caption buttons (minimise / maximise / close), top-right */
+  .wc{order:3;margin-left:auto;display:flex;align-items:center;gap:1px}
+  .wc b{width:26px;height:18px;display:grid;place-items:center;font-style:normal;font-weight:400;border-radius:4px;line-height:1;transition:background .12s}
+  .wc b::before{color:var(--dim2);font-size:11px}
+  .wc b:nth-child(1)::before{content:"\2013"}
+  .wc b:nth-child(2)::before{content:"\25A1";font-size:10px}
+  .wc b:nth-child(3)::before{content:"\2715";font-size:10px}
+  .wc b:hover{background:rgba(255,255,255,.06)}
+  .wc b:last-child:hover{background:#e81123}
+  .wc b:last-child:hover::before{color:#fff}
+  .panel-live i{width:6px;height:6px;border-radius:50%;background:var(--grn-b);box-shadow:0 0 8px var(--grn-b);animation:blink 1.8s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .panel-body{padding:16px}
+
+  /* chip strip (mirrors the app) */
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .chip{display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--bg2);
+    border:1px solid var(--border);border-radius:9px;white-space:nowrap}
+  .chip .v{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;min-width:22px}
+  .chip .l{font-family:var(--mono);font-size:9.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.11em}
+
+  /* data table */
+  .tbl{width:100%;border-collapse:collapse;font-size:13px}
+  .tbl th{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim2);
+    text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);font-weight:600}
+  .tbl td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.035)}
+  .tbl tr:last-child td{border-bottom:none}
+  .tbl tr:hover td{background:rgba(63,185,80,.04)}
+  .tag{font-family:var(--mono);font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:5px;letter-spacing:.05em;white-space:nowrap}
+  .t-srv{background:rgba(88,166,255,.12);color:var(--blue)}
+  .t-quiet{background:rgba(248,81,73,.13);color:var(--red)}
+  .t-train{background:rgba(63,185,80,.13);color:var(--grn-b)}
+  .lvl{color:#c9a6ff;font-weight:700;font-variant-numeric:tabular-nums}
+  .g{color:var(--gold)}
+  .tbl-wrap{overflow-x:auto}
+
+  /* ---- section scaffolding ---- */
+  section{padding:70px 0;position:relative}
+  .sec-head{max-width:60ch;margin-bottom:34px}
+  .sec-head h2{margin:12px 0 14px}
+  .feat{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+  .feat.flip .copy{order:2}
+  @media(max-width:880px){.feat,.feat.flip{grid-template-columns:1fr;gap:26px}.feat.flip .copy{order:0}}
+  .copy .eyebrow{color:var(--gold)}
+  .copy h2{margin:12px 0 14px}
+  .copy p{color:var(--dim);font-size:15.5px}
+  .bullets{list-style:none;margin-top:20px;display:flex;flex-direction:column;gap:11px}
+  .bullets li{display:flex;gap:11px;font-size:14.5px;color:var(--txt)}
+  .bullets .k{color:var(--grn-b);font-family:var(--mono);flex-shrink:0;margin-top:2px}
+  .bullets em{color:var(--dim);font-style:normal}
+
+  /* divider rule */
+  .rule{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
+
+  /* map */
+  .mapwrap{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--border2);
+    background:radial-gradient(120% 120% at 50% 0%,#0b1a12,#05080d 70%);aspect-ratio:1/1}
+  #mapcv{display:block;width:100%;height:100%}
+  .maplegend{position:absolute;top:10px;left:10px;display:flex;gap:12px;flex-wrap:wrap;
+    background:rgba(5,8,13,.72);border:1px solid var(--border);border-radius:8px;padding:6px 10px;
+    font-family:var(--mono);font-size:10px;color:#cdd6e2;letter-spacing:.04em}
+  .maplegend span{display:flex;align-items:center;gap:5px}
+  .maplegend i{width:7px;height:7px;border-radius:50%}
+  .mapstat{position:absolute;bottom:9px;left:11px;font-family:var(--mono);font-size:10px;color:#8b949e}
+
+  /* stat strip */
+  .stripwrap{border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg,rgba(63,185,80,.03),transparent)}
+  .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border)}
+  .strip .cell{background:var(--bg);padding:30px 20px;text-align:center}
+  .strip .big{font-size:clamp(30px,5vw,46px);font-weight:800;font-variant-numeric:tabular-nums;
+    background:linear-gradient(180deg,var(--txt),#9fb0c2);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .strip .big.gold{background:linear-gradient(180deg,var(--gold),var(--gold-d));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .strip .cap{font-family:var(--mono);font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.14em;margin-top:8px}
+  @media(max-width:720px){.strip{grid-template-columns:repeat(2,1fr)}}
+
+  /* CPU/RAM bars */
+  .meter{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+  .meter .row{display:flex;align-items:center;gap:12px}
+  .meter .lab{font-family:var(--mono);font-size:10px;color:var(--dim);width:42px;text-transform:uppercase;letter-spacing:.1em}
+  .track{flex:1;height:8px;border-radius:100px;background:#0a0f16;border:1px solid var(--border);overflow:hidden}
+  .fill{height:100%;border-radius:100px;width:0;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+  .fill.cpu{background:linear-gradient(90deg,var(--grn),var(--grn-b))}
+  .fill.ram{background:linear-gradient(90deg,var(--blue),#79b8ff)}
+  .meter .pct{font-family:var(--mono);font-size:11px;color:var(--txt);width:38px;text-align:right;font-variant-numeric:tabular-nums}
+
+  /* whats new cards */
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(max-width:760px){.cards{grid-template-columns:1fr}}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border2);
+    border-radius:13px;padding:22px;position:relative;overflow:hidden}
+  .card::after{content:"";position:absolute;inset:0;border-radius:13px;padding:1px;
+    background:linear-gradient(140deg,rgba(63,185,80,.35),transparent 40%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .3s}
+  .card:hover::after{opacity:1}
+  .card .n{font-family:var(--mono);font-size:11px;color:var(--grn);letter-spacing:.1em}
+  .card h3{font-size:18px;margin:12px 0 8px}
+  .card p{font-size:14px;color:var(--dim)}
+
+  /* group header */
+  .grouphead{display:flex;align-items:center;gap:16px;padding:46px 0 4px}
+  .grouphead .gh-lbl{font-family:var(--mono);font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+  .grouphead .gh-num{font-family:var(--mono);font-size:10.5px;color:var(--grn);border:1px solid #234d2c;border-radius:100px;padding:2px 10px;white-space:nowrap}
+  .grouphead .gh-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
+
+  /* nav index */
+  .navgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:860px){.navgrid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:480px){.navgrid{grid-template-columns:1fr}}
+  .navgroup{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:12px;padding:15px}
+  .navgroup .ng-t{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim2);margin-bottom:10px}
+  .navitem{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:8px;font-size:13.5px;transition:background .15s}
+  .navitem:hover{background:rgba(63,185,80,.06)}
+  .navitem .ic{width:18px;text-align:center;font-size:13px;flex-shrink:0}
+  .navitem .vip{margin-left:auto;font-family:var(--mono);font-size:8px;color:var(--gold);border:1px solid rgba(245,197,24,.3);border-radius:4px;padding:1px 4px;letter-spacing:.06em}
+
+  /* items grid */
+  .itemgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+  @media(max-width:560px){.itemgrid{grid-template-columns:repeat(2,1fr)}}
+  .itemcell{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:11px}
+  .itemcell .iv{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+  .itemcell .il{font-family:var(--mono);font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+
+  /* favorites + groups + alerts */
+  .favrow{display:flex;gap:9px;flex-wrap:wrap}
+  .favcard{flex:1;min-width:140px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px}
+  .favcard .fh{display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px}
+  .favcard .fstar{color:var(--gold)}
+  .favcard .fm{font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:5px}
+  .grpfolder{display:flex;align-items:center;gap:11px;padding:11px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+  .grpfolder .gcount{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--dim)}
+  .alertrow{display:flex;align-items:center;gap:11px;padding:10px 4px;border-bottom:1px solid rgba(255,255,255,.045);font-size:13px}
+  .alertrow:last-child{border-bottom:none}
+  .alertrow .ab{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .alertrow time{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--dim2)}
+  .tri{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:820px){.tri{grid-template-columns:1fr}}
+
+  /* CTA */
+  .cta{text-align:center;padding:90px 0 80px}
+  .cta h2{margin-bottom:16px}
+  .cta .lead{margin:0 auto 30px}
+  .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-lg{padding:14px 26px;font-size:15px;border-radius:11px}
+
+  footer{border-top:1px solid var(--border);padding:30px 0;text-align:center;
+    font-family:var(--mono);font-size:11px;color:var(--dim2);letter-spacing:.05em}
+  footer .g{color:var(--grn)}
+
+  /* reveal animation — only hidden when JS is present, so the page still shows
+     everything if the script never runs */
+  .rv{transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .js .rv{opacity:0;transform:translateY(26px)}
+  .rv.in{opacity:1;transform:none}
+  .js #botpanel{opacity:0;transition:opacity .5s}
+  @media(prefers-reduced-motion:reduce){
+    .rv{opacity:1!important;transform:none!important;transition:none}
+    .panel-live i,.hero .dot{animation:none!important}
+    html{scroll-behavior:auto}
+  }
+
+  /* boot lines */
+  .boot{font-family:var(--mono);font-size:12px;line-height:1.9;min-height:88px;color:var(--dim)}
+  .boot b{color:var(--grn-b)}
+  .boot .c{color:var(--txt)}
+  .cursor{display:inline-block;width:8px;height:14px;background:var(--grn-b);vertical-align:-2px;margin-left:2px;animation:cur .9s step-end infinite}
+  @keyframes cur{50%{opacity:0}}
+</style>
+</head>
+<body>
+
+<script>document.documentElement.className += ' js';</script>
+
+<header>
+  <div class="wrap bar">
+    <div class="brand"><span class="logo"></span><b>OPTiC</b></div>
+    <span class="barpill" id="verPill">latest</span>
+    <span class="sp"></span>
+    <a class="btn btn-g" href="#tour">Feature tour</a>
+    <a class="btn btn-p" href="#get">Get it &rarr;</a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div class="rv in">
+        <span class="eyebrow">OPTiC Account Monitor</span>
+        <h1>See the whole server.<br><span class="g">Run every account.</span></h1>
+        <p class="lead">One console for your entire Evony operation — live bot control, server-wide prestige and hero intel, and a tactical map that tells you exactly who's worth hitting.</p>
+        <div class="hero-cta">
+          <a class="btn btn-p btn-lg" href="#get">Download OPTiC</a>
+          <span class="relaunch"><span class="dot"></span>Already running it? It updates itself on next launch.</span>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--gold)"></i>Your empire</span>
+          <span><i style="background:var(--grn-b)"></i>Alliance</span>
+          <span><i style="background:var(--red)"></i>Enemy &amp; opportunity</span>
+          <span><i style="background:#6e7681"></i>Neutral</span>
+        </div>
+      </div>
+
+      <div class="rv in">
+        <div class="panel">
+          <div class="panel-top">
+            <span class="wc"><b></b><b></b><b></b></span>
+            <span class="panel-title">bots &middot; command</span>
+            <span class="panel-live"><i></i>LIVE</span>
+          </div>
+          <div class="panel-body">
+            <div class="boot" id="boot"></div>
+            <div id="botpanel">
+              <div class="chips">
+                <div class="chip"><span class="v" style="color:var(--grn-b)"><span class="cnt" data-to="12">0</span></span><span class="l">running</span></div>
+                <div class="chip"><span class="v"><span class="cnt" data-to="18">0</span></span><span class="l">total</span></div>
+                <div class="chip"><span class="v" style="color:var(--blue)"><span class="cnt" data-to="9">0</span></span><span class="l">auto</span></div>
+              </div>
+              <div class="meter">
+                <div class="row"><span class="lab">CPU</span><span class="track"><span class="fill cpu" data-w="34"></span></span><span class="pct">34%</span></div>
+                <div class="row"><span class="lab">RAM</span><span class="track"><span class="fill ram" data-w="58"></span></span><span class="pct">58%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stripwrap rv">
+    <div class="wrap">
+      <div class="strip">
+        <div class="cell"><div class="big num"><span class="cnt" data-to="16">0</span></div><div class="cap">provinces swept / hr</div></div>
+        <div class="cell"><div class="big gold num"><span class="cnt" data-to="32602">0</span></div><div class="cap">heroes indexed</div></div>
+        <div class="cell"><div class="big num"><span class="cnt" data-to="8">0</span></div><div class="cap">colour themes</div></div>
+        <div class="cell"><div class="big num" style="font-size:clamp(20px,3.2vw,30px);letter-spacing:.02em">Ctrl&nbsp;+&nbsp;K</div><div class="cap">find anything, one hotkey</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tour"></div>
+
+  <!-- NAV INDEX -->
+  <section style="padding-bottom:30px">
+    <div class="wrap">
+      <div class="sec-head rv" style="text-align:center;max-width:64ch;margin:0 auto 34px">
+        <span class="eyebrow">One console, every angle</span>
+        <h2 style="margin:12px 0 14px">Seventeen tools. One window.</h2>
+        <p class="lead" style="margin:0 auto">Organised the way you actually work — a quick overview, the raw data, battlefield intel, and the map. Everything a click apart in the sidebar.</p>
+      </div>
+      <div class="navgrid rv">
+        <div class="navgroup">
+          <div class="ng-t">Overview</div>
+          <div class="navitem"><span class="ic">&#128202;</span>Dashboard</div>
+          <div class="navitem"><span class="ic" style="color:var(--gold)">&#11088;</span>Favorites</div>
+          <div class="navitem"><span class="ic">&#128193;</span>Groups</div>
+          <div class="navitem"><span class="ic" style="color:var(--red)">&#128680;</span>Alerts</div>
+        </div>
+        <div class="navgroup">
+          <div class="ng-t">Data</div>
+          <div class="navitem"><span class="ic" style="color:var(--grn)">&#128100;</span>Accounts</div>
+          <div class="navitem"><span class="ic" style="color:var(--gold)">&#127961;&#65039;</span>Cities</div>
+          <div class="navitem"><span class="ic" style="color:#bc8cff">&#9876;&#65039;</span>Heroes</div>
+          <div class="navitem"><span class="ic" style="color:var(--amber)">&#127890;</span>Items</div>
+        </div>
+        <div class="navgroup">
+          <div class="ng-t">Intel</div>
+          <div class="navitem"><span class="ic" style="color:var(--blue)">&#128270;</span>Scouts<span class="vip">VIP</span></div>
+          <div class="navitem"><span class="ic" style="color:var(--red)">&#10060;</span>Failed<span class="vip">VIP</span></div>
+          <div class="navitem"><span class="ic" style="color:var(--red)">&#128201;</span>Low Loyalty<span class="vip">VIP</span></div>
+          <div class="navitem"><span class="ic" style="color:var(--amber)">&#128081;</span>Prestige<span class="vip">VIP</span></div>
+          <div class="navitem"><span class="ic" style="color:#a371f7">&#9876;&#65039;</span>Hero Index<span class="vip">VIP</span></div>
+        </div>
+        <div class="navgroup">
+          <div class="ng-t">Explore &amp; control</div>
+          <div class="navitem"><span class="ic" style="color:var(--grn)">&#127759;</span>Map Data</div>
+          <div class="navitem"><span class="ic" style="color:#bc8cff">&#129518;</span>Calculator</div>
+          <div class="navitem"><span class="ic">&#128203;</span>Activity</div>
+          <div class="navitem"><span class="ic" style="color:var(--grn-b)">&#128421;&#65039;</span>Bots</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DATA ===== -->
+  <div class="wrap"><div class="grouphead rv"><span class="gh-lbl">Data</span><span class="gh-num">reported automatically</span><span class="gh-line"></span></div></div>
+
+  <!-- ACCOUNTS -->
+  <section style="padding:34px 0">
+    <div class="wrap feat">
+      <div class="copy rv">
+        <span class="eyebrow" style="color:var(--grn)">Accounts</span>
+        <h2>Your whole roster, ranked.</h2>
+        <p>Every account that's checked in — prestige, honor, city count, best hero and server rank, refreshed on its own. Star the ones that matter and sort by any column.</p>
+        <ul class="bullets">
+          <li><span class="k">&#9654;</span><span>Auto-updates as bots report; nothing to refresh by hand.</span></li>
+          <li><span class="k">&#9654;</span><span>Pin, star, sort and filter across every server at once.</span></li>
+        </ul>
+      </div>
+      <div class="rv"><div class="panel">
+        <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title">accounts</span><span class="panel-live"><i></i>184 LOADED</span></div>
+        <div class="panel-body"><div class="tbl-wrap"><table class="tbl">
+          <tr><th>&#9733;</th><th>Account</th><th>Alliance</th><th>Prestige</th><th>Cities</th><th>Hero</th><th>Rank</th></tr>
+          <tr><td class="g">&#9733;</td><td><b>NightReign</b></td><td style="color:var(--dim)">IRON WOLVES</td><td class="num g">4,912,300</td><td class="num">9</td><td class="lvl">1,204</td><td class="num">#7</td></tr>
+          <tr><td style="color:var(--dim2)">&#9734;</td><td><b>meridian</b></td><td style="color:var(--dim)">IRON WOLVES</td><td class="num g">1,780,442</td><td class="num">7</td><td class="lvl">1,090</td><td class="num">#31</td></tr>
+          <tr><td class="g">&#9733;</td><td><b>ColdBrew_88</b></td><td style="color:var(--dim)">VALHALLA</td><td class="num g">2,144,905</td><td class="num">8</td><td class="lvl">874</td><td class="num">#19</td></tr>
+          <tr><td style="color:var(--dim2)">&#9734;</td><td><b>saltmarsh</b></td><td style="color:var(--dim)">&mdash;</td><td class="num g">903,110</td><td class="num">5</td><td class="lvl">733</td><td class="num">#88</td></tr>
+        </table></div></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- CITIES -->
+  <section style="padding:34px 0">
+    <div class="wrap feat flip">
+      <div class="copy rv">
+        <span class="eyebrow" style="color:var(--gold)">Cities</span>
+        <h2>Every city, every resource.</h2>
+        <p>Food, wood, stone, iron and gold beside the full troop count for each city on the map — coordinates, garrison and food burn included. Spot a stripped city or a fat target instantly.</p>
+        <ul class="bullets">
+          <li><span class="k">&#9654;</span><span>Resources and troops per city, updated live.</span></li>
+          <li><span class="k">&#9654;</span><span>Pick the columns you care about; sort by gold, troops or burn.</span></li>
+        </ul>
+      </div>
+      <div class="rv"><div class="panel">
+        <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title">cities</span><span class="panel-live"><i></i>LIVE</span></div>
+        <div class="panel-body"><div class="tbl-wrap"><table class="tbl">
+          <tr><th>City</th><th>Coords</th><th>Gold</th><th>Scouts</th><th>Archers</th><th>Burn/hr</th></tr>
+          <tr><td><b>Ravenspire</b></td><td class="mono" style="color:var(--dim)">412,388</td><td class="num g">88.4m</td><td class="num">14,200</td><td class="num">402,000</td><td class="num" style="color:var(--red)">44.1k</td></tr>
+          <tr><td><b>Blackfen</b></td><td class="mono" style="color:var(--dim)">205,617</td><td class="num g">51.9m</td><td class="num">9,050</td><td class="num">188,400</td><td class="num" style="color:var(--red)">31.7k</td></tr>
+          <tr><td><b>Hollowmere</b></td><td class="mono" style="color:var(--dim)">633,540</td><td class="num g">12.0m</td><td class="num">2,780</td><td class="num">61,900</td><td class="num" style="color:var(--red)">14.2k</td></tr>
+        </table></div></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- HEROES (per account) -->
+  <section style="padding:34px 0">
+    <div class="wrap feat">
+      <div class="copy rv">
+        <span class="eyebrow" style="color:#bc8cff">Heroes</span>
+        <h2>Every hero you own.</h2>
+        <p>The full hero roster across all your cities — attack, politics and intel side by side, with base stats — so you always know which hero belongs where.</p>
+        <ul class="bullets">
+          <li><span class="k">&#9654;</span><span>Attack / politics / intel and base stat per hero.</span></li>
+          <li><span class="k">&#9654;</span><span>Movers tracked by unique id, so a relocated hero isn't double-counted.</span></li>
+        </ul>
+      </div>
+      <div class="rv"><div class="panel">
+        <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title">heroes</span><span class="panel-live"><i></i>LIVE</span></div>
+        <div class="panel-body"><div class="tbl-wrap"><table class="tbl">
+          <tr><th>Hero</th><th>City</th><th>Lvl</th><th>Atk</th><th>Pol</th><th>Int</th></tr>
+          <tr><td><b>Hannibal</b></td><td style="color:var(--dim)">Ravenspire</td><td class="lvl">1,204</td><td class="num">988</td><td class="num">640</td><td class="num">712</td></tr>
+          <tr><td><b>Boudica</b></td><td style="color:var(--dim)">Blackfen</td><td class="lvl">1,090</td><td class="num">910</td><td class="num">588</td><td class="num">655</td></tr>
+          <tr><td><b>El&nbsp;Cid</b></td><td style="color:var(--dim)">Hollowmere</td><td class="lvl">874</td><td class="num">802</td><td class="num">521</td><td class="num">470</td></tr>
+        </table></div></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ITEMS -->
+  <section style="padding:34px 0">
+    <div class="wrap feat flip">
+      <div class="copy rv">
+        <span class="eyebrow" style="color:var(--amber)">Items</span>
+        <h2>Rare items, counted for you.</h2>
+        <p>The stockpile that never fits on screen in-game — read straight from memory, so every Excalibur, amulet, sigil and crystal is tallied per account the instant a bot checks in.</p>
+        <ul class="bullets">
+          <li><span class="k">&#9654;</span><span>Instant counts &mdash; no slow in-game item list to wait on.</span></li>
+          <li><span class="k">&#9654;</span><span>Pick which items to show; totalled across your whole fleet.</span></li>
+        </ul>
+      </div>
+      <div class="rv"><div class="panel">
+        <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title">items &middot; fleet total</span><span class="panel-live"><i></i>LIVE</span></div>
+        <div class="panel-body"><div class="itemgrid">
+          <div class="itemcell"><div class="iv g">1,428</div><div class="il">Excaliburs</div></div>
+          <div class="itemcell"><div class="iv">3,902</div><div class="il">Amulets</div></div>
+          <div class="itemcell"><div class="iv" style="color:#bc8cff">640</div><div class="il">Crystals</div></div>
+          <div class="itemcell"><div class="iv" style="color:var(--blue)">211</div><div class="il">Sigils</div></div>
+          <div class="itemcell"><div class="iv">1,015</div><div class="il">Wealth</div></div>
+          <div class="itemcell"><div class="iv">58</div><div class="il">Anabasis</div></div>
+          <div class="itemcell"><div class="iv g">7,340</div><div class="il">War Ports</div></div>
+          <div class="itemcell"><div class="iv" style="color:var(--red)">92</div><div class="il">Broken Gates</div></div>
+        </div></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ===== INTEL ===== -->
+  <div class="wrap"><div class="grouphead rv"><span class="gh-lbl">Intel</span><span class="gh-num">VIP</span><span class="gh-line"></span></div></div>
+
+  <!-- PRESTIGE -->
+  <section>
+    <div class="wrap feat">
+      <div class="copy rv">
+        <span class="eyebrow">Prestige Monitor</span>
+        <h2>Catch them sleeping.</h2>
+        <p>Every sweep tracks who's still training and who's gone quiet. The moment a lord stops moving, they surface — the whole server the instant you scan, then filtered to real opportunities.</p>
+        <ul class="bullets">
+          <li><span class="k">&#9654;</span><span>See the <b>entire server</b> right after a scan, then narrow to <em>quiet 1h / 3h / 12h</em> down-time.</span></li>
+          <li><span class="k">&#9654;</span><span>A <em>no-baseline</em> flag keeps first-sighting lords from faking activity.</span></li>
+          <li><span class="k">&#9654;</span><span>Holiday &amp; truce aware — it won't flag someone who can't be hit.</span></li>
+        </ul>
+      </div>
+      <div class="rv">
+        <div class="panel">
+          <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title">prestige monitor &middot; ss71</span><span class="panel-live"><i></i>SWEPT 3M AGO</span></div>
+          <div class="panel-body">
+            <div class="chips">
+              <div class="chip"><span class="v"><span class="cnt" data-to="3888">0</span></span><span class="l">watched</span></div>
+              <div class="chip"><span class="v" style="color:var(--grn-b)"><span class="cnt" data-to="1278">0</span></span><span class="l">training</span></div>
+              <div class="chip"><span class="v" style="color:var(--red)"><span class="cnt" data-to="23">0</span></span><span class="l">gone quiet</span></div>
+            </div>
+            <div class="tbl-wrap"><table class="tbl">
+              <tr><th>Lord</th><th>Alliance</th><th>Prestige</th><th>Status</th></tr>
+              <tr><td><b>NightReign</b></td><td class="mono" style="color:var(--dim)">IRON WOLVES</td><td class="num g">4,912,300</td><td><span class="tag t-quiet">QUIET 3H</span></td></tr>
+              <tr><td><b>ColdBrew_88</b></td><td class="mono" style="color:var(--dim)">VALHALLA</td><td class="num g">2,144,905</td><td><span class="tag t-quiet">QUIET 1H</span></td></tr>
+              <tr><td><b>meridian</b></td><td class="mono" style="color:var(--dim)">IRON WOLVES</td><td class="num g">1,780,442</td><td><span class="tag t-train">TRAINING</span></td></tr>
+              <tr><td><b>saltmarsh</b></td><td class="mono" style="color:var(--dim)">&mdash;</td><td class="num g">903,110</td><td><span class="tag t-quiet">QUIET 12H</span></td></tr>
+            </table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="rule"></div></div>
+
+  <!-- HERO INDEX -->
+  <section>
+    <div class="wrap feat flip">
+      <div class="copy rv">
+        <span class="eyebrow">Hero Index</span>
+        <h2>Every hero. Every owner.</h2>
+        <p>A server-wide index of who owns which heroes, swept as fast as the prestige list. Know whether a target is holding a serious defence hero <em>before</em> you commit a wave.</p>
+        <ul class="bullets">
+          <li><span class="k">&#9654;</span><span>Search 32,000+ heroes by name or owner in an instant.</span></li>
+          <li><span class="k">&#9654;</span><span>Set a <b>min level</b> so the filler drops away and only real threats show.</span></li>
+          <li><span class="k">&#9654;</span><span>Cross-linked to the map and prestige — jump straight to a lord's cities.</span></li>
+        </ul>
+      </div>
+      <div class="rv">
+        <div class="panel">
+          <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title">hero index &middot; min lvl 700</span><span class="panel-live"><i></i>LIVE</span></div>
+          <div class="panel-body">
+            <div class="chips">
+              <div class="chip"><span class="v"><span class="cnt" data-to="32602">0</span></span><span class="l">heroes</span></div>
+              <div class="chip"><span class="v" style="color:var(--grn-b)"><span class="cnt" data-to="1841">0</span></span><span class="l">accounts</span></div>
+              <div class="chip"><span class="v" style="color:#c9a6ff">1.2k</span><span class="l">top level</span></div>
+            </div>
+            <div class="tbl-wrap"><table class="tbl">
+              <tr><th>Hero</th><th>Owner</th><th>Level</th><th>Atk</th></tr>
+              <tr><td><b>Hannibal</b></td><td style="color:var(--dim)">NightReign</td><td class="lvl">1,204</td><td class="num">988</td></tr>
+              <tr><td><b>Boudica</b></td><td style="color:var(--dim)">meridian</td><td class="lvl">1,090</td><td class="num">910</td></tr>
+              <tr><td><b>El&nbsp;Cid</b></td><td style="color:var(--dim)">ColdBrew_88</td><td class="lvl">874</td><td class="num">802</td></tr>
+              <tr><td><b>Nobunaga</b></td><td style="color:var(--dim)">saltmarsh</td><td class="lvl">733</td><td class="num">711</td></tr>
+            </table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="rule"></div></div>
+
+  <!-- SCOUTING INTEL -->
+  <section style="padding:56px 0">
+    <div class="wrap">
+      <div class="sec-head rv" style="max-width:64ch">
+        <span class="eyebrow" style="color:var(--blue)">Scouts &middot; Failed &middot; Low Loyalty</span>
+        <h2 style="margin:12px 0 14px">Read the battlefield before you commit.</h2>
+        <p class="lead">Every scout report lands here in full — every troop type, wall and fortification, resources and gold on the cities you're eyeing. Click any report for the complete breakdown, choose your own columns, and let <b style="color:var(--txt)">Scout Target Alerts</b> ping your Discord the moment you sweep a city that's capturable, fat, or lightly held.</p>
+      </div>
+      <div class="tri rv">
+        <div class="panel">
+          <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title">scouts</span></div>
+          <div class="panel-body">
+            <div class="chips" style="margin-bottom:10px"><div class="chip"><span class="v" style="color:var(--blue)">2,410</span><span class="l">reports</span></div></div>
+            <div class="tbl-wrap"><table class="tbl">
+              <tr><th>City</th><th>Troops</th><th>Wall</th></tr>
+              <tr><td class="mono" style="color:var(--dim)">412,388</td><td class="num">1.2m</td><td class="num" style="color:var(--amber)">heavy</td></tr>
+              <tr><td class="mono" style="color:var(--dim)">205,617</td><td class="num">0</td><td class="num" style="color:var(--grn-b)">open</td></tr>
+              <tr><td class="mono" style="color:var(--dim)">633,540</td><td class="num">88k</td><td class="num">light</td></tr>
+            </table></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title" style="color:var(--red)">failed</span></div>
+          <div class="panel-body">
+            <div class="chips" style="margin-bottom:10px"><div class="chip"><span class="v" style="color:var(--red)">37</span><span class="l">caught</span></div></div>
+            <div class="tbl-wrap"><table class="tbl">
+              <tr><th>City</th><th>Reason</th></tr>
+              <tr><td class="mono" style="color:var(--dim)">300,301</td><td style="color:var(--red)">detected</td></tr>
+              <tr><td class="mono" style="color:var(--dim)">511,204</td><td style="color:var(--red)">defended</td></tr>
+              <tr><td class="mono" style="color:var(--dim)">418,090</td><td style="color:var(--red)">detected</td></tr>
+            </table></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title" style="color:var(--gold)">low loyalty</span></div>
+          <div class="panel-body">
+            <div class="chips" style="margin-bottom:10px"><div class="chip"><span class="v g">14</span><span class="l">capturable</span></div></div>
+            <div class="tbl-wrap"><table class="tbl">
+              <tr><th>City</th><th>Loyalty</th></tr>
+              <tr><td class="mono" style="color:var(--dim)">220,447</td><td class="num" style="color:var(--red)">8</td></tr>
+              <tr><td class="mono" style="color:var(--dim)">709,112</td><td class="num" style="color:var(--amber)">22</td></tr>
+              <tr><td class="mono" style="color:var(--dim)">150,933</td><td class="num" style="color:var(--amber)">31</td></tr>
+            </table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="rule"></div></div>
+
+  <!-- ===== PLAN ===== -->
+  <div class="wrap"><div class="grouphead rv"><span class="gh-lbl">Plan</span><span class="gh-num">battle calculator</span><span class="gh-line"></span></div></div>
+
+  <!-- BATTLE CALCULATOR -->
+  <section style="padding:34px 0">
+    <div class="wrap feat flip">
+      <div class="copy rv">
+        <span class="eyebrow" style="color:#bc8cff">Battle Calculator</span>
+        <h2>Plan the wave before you send it.</h2>
+        <p>Load a scout report straight into the calculator and simulate the attack round by round — your hero's attack and intel, the wall and every fortification, all in. Chain a second wave onto the survivors and see exactly what it takes to break the city.</p>
+        <ul class="bullets">
+          <li><span class="k">&#9654;</span><span>Import any scout report &mdash; every troop type and fortification fills itself in.</span></li>
+          <li><span class="k">&#9654;</span><span>Hero attack &amp; intel, wall and fort modifiers modelled round by round.</span></li>
+          <li><span class="k">&#9654;</span><span>Chain waves onto the defenders that survived and read the losses.</span></li>
+        </ul>
+      </div>
+      <div class="rv"><div class="panel">
+        <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title">calculator &middot; wave 1</span><span class="panel-live"><i></i>SIMULATED</span></div>
+        <div class="panel-body">
+          <div class="chips" style="margin-bottom:12px">
+            <div class="chip"><span class="v" style="color:var(--grn-b)">6</span><span class="l">rounds</span></div>
+            <div class="chip"><span class="v g">WIN</span><span class="l">outcome</span></div>
+            <div class="chip"><span class="v" style="color:var(--red)">61%</span><span class="l">your losses</span></div>
+          </div>
+          <div class="tbl-wrap"><table class="tbl">
+            <tr><th>Round</th><th>You lose</th><th>They lose</th><th>Wall</th></tr>
+            <tr><td class="mono">1</td><td class="num">18,400</td><td class="num" style="color:var(--grn-b)">96,200</td><td class="num" style="color:var(--amber)">72%</td></tr>
+            <tr><td class="mono">3</td><td class="num">44,910</td><td class="num" style="color:var(--grn-b)">301,540</td><td class="num" style="color:var(--amber)">28%</td></tr>
+            <tr><td class="mono">6</td><td class="num">80,120</td><td class="num" style="color:var(--grn-b)">512,000</td><td class="num" style="color:var(--grn-b)">razed</td></tr>
+          </table></div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ===== EXPLORE ===== -->
+  <div class="wrap"><div class="grouphead rv"><span class="gh-lbl">Explore</span><span class="gh-num">13,772 cities</span><span class="gh-line"></span></div></div>
+
+  <!-- MAP -->
+  <section>
+    <div class="wrap feat">
+      <div class="copy rv">
+        <span class="eyebrow">Map Data</span>
+        <h2>The whole map, one search.</h2>
+        <p>Rebuilt from two search boxes that ignored each other into one engine the canvas, the list and the table all agree on. Filter by alliance, prestige, distance or shield — every view stays in step.</p>
+        <ul class="bullets">
+          <li><span class="k">&#9654;</span><span>Colour-coded at a glance: <span class="g">yours</span>, <b>alliance</b>, <span style="color:var(--red)">enemy</span>, neutral.</span></li>
+          <li><span class="k">&#9654;</span><span>Now self-cleaning — razed and teleported-away cities are reaped every sweep.</span></li>
+          <li><span class="k">&#9654;</span><span>Find a player, judge the surroundings, pick your targets — all in one place.</span></li>
+        </ul>
+      </div>
+      <div class="rv">
+        <div class="mapwrap">
+          <canvas id="mapcv" width="620" height="620"></canvas>
+          <div class="maplegend">
+            <span><i style="background:#f5c518"></i>Yours</span>
+            <span><i style="background:#3fb950"></i>Alliance</span>
+            <span><i style="background:#f85149"></i>Enemy</span>
+            <span><i style="background:#8b949e"></i>Neutral</span>
+          </div>
+          <div class="mapstat" id="mapstat">scanning&hellip;</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="rule"></div></div>
+
+  <!-- ===== OVERVIEW ===== -->
+  <div class="wrap"><div class="grouphead rv"><span class="gh-lbl">Overview</span><span class="gh-num">at a glance</span><span class="gh-line"></span></div></div>
+
+  <!-- FAVORITES + GROUPS -->
+  <section style="padding:34px 0">
+    <div class="wrap feat">
+      <div class="copy rv">
+        <span class="eyebrow" style="color:var(--gold)">Favorites &amp; Groups</span>
+        <h2>Keep the ones that matter close.</h2>
+        <p>Star your key accounts to the top, then drag them into groups — feeders, builders, mains, whatever you run. Reorder by hand; the layout sticks.</p>
+        <ul class="bullets">
+          <li><span class="k">&#9654;</span><span>Pin favourites to a quick-access board.</span></li>
+          <li><span class="k">&#9654;</span><span>Group accounts and act on a whole group at once.</span></li>
+        </ul>
+      </div>
+      <div class="rv"><div class="panel">
+        <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title">favorites</span></div>
+        <div class="panel-body">
+          <div class="favrow" style="margin-bottom:16px">
+            <div class="favcard"><div class="fh"><span class="fstar">&#9733;</span>NightReign</div><div class="fm">ss71 &middot; 4.9m &middot; #7</div></div>
+            <div class="favcard"><div class="fh"><span class="fstar">&#9733;</span>ColdBrew_88</div><div class="fm">ss71 &middot; 2.1m &middot; #19</div></div>
+          </div>
+          <div class="panel-title" style="margin:0 0 10px">groups</div>
+          <div class="grpfolder"><span style="color:var(--gold)">&#128193;</span><b style="font-size:13px">Mains</b><span class="gcount">6 accounts</span></div>
+          <div class="grpfolder"><span style="color:var(--gold)">&#128193;</span><b style="font-size:13px">Feeders</b><span class="gcount">11 accounts</span></div>
+          <div class="grpfolder" style="margin-bottom:0"><span style="color:var(--gold)">&#128193;</span><b style="font-size:13px">Builders</b><span class="gcount">4 accounts</span></div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD + ALERTS -->
+  <section style="padding:34px 0">
+    <div class="wrap feat flip">
+      <div class="copy rv">
+        <span class="eyebrow" style="color:var(--red)">Dashboard &amp; Alerts</span>
+        <h2>What needs you, right now.</h2>
+        <p>The dashboard opens on what's live and what's down. Alerts surface the things you can't miss — incoming attacks, broken gates, starving cities — in the app and on Discord the second a bot reports them.</p>
+        <ul class="bullets">
+          <li><span class="k">&#9654;</span><span>Incoming attacks broken out <b>wave by wave</b> — attacker, troops and landing time, soonest first.</span></li>
+          <li><span class="k">&#9654;</span><span>A troop floor mutes your own hero-leveling and trebbing, so only real hits page you.</span></li>
+          <li><span class="k">&#9654;</span><span>Active vs. offline accounts front and centre, every alert with a live badge.</span></li>
+        </ul>
+      </div>
+      <div class="rv"><div class="panel">
+        <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title">alerts</span><span class="panel-live" style="color:var(--red)"><i style="background:var(--red);box-shadow:0 0 8px var(--red)"></i>3 ACTIVE</span></div>
+        <div class="panel-body">
+          <div class="chips" style="margin-bottom:6px">
+            <div class="chip"><span class="v" style="color:var(--grn-b)">12</span><span class="l">online</span></div>
+            <div class="chip"><span class="v" style="color:var(--red)">2</span><span class="l">offline</span></div>
+          </div>
+          <div class="alertrow"><span class="ab" style="background:var(--red)"></span><span><b>3 waves inbound</b> &middot; Ravenspire &middot; <span class="mono" style="color:var(--dim)">cp:8,000</span></span><time>1m</time></div>
+          <div class="alertrow"><span class="ab" style="background:var(--amber)"></span><span><b>Broken gate</b> &middot; Blackfen</span><time>2m</time></div>
+          <div class="alertrow"><span class="ab" style="background:var(--gold)"></span><span><b>Food low</b> &middot; Hollowmere</span><time>8m</time></div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="grouphead rv"><span class="gh-lbl">Control</span><span class="gh-num">command center</span><span class="gh-line"></span></div></div>
+
+  <!-- BOTS -->
+  <section>
+    <div class="wrap feat flip">
+      <div class="copy rv">
+        <span class="eyebrow">Bot Command Center</span>
+        <h2>Launch, watch, restart.</h2>
+        <p>Run every account from one window. Auto-restart brings dropped bots back on its own, a live CPU &amp; memory meter rides every tab, and bulk edit changes a hundred profiles at once.</p>
+        <ul class="bullets">
+          <li><span class="k">&#9654;</span><span>Auto-launch on startup; dropped bots return in <b>seconds</b>.</span></li>
+          <li><span class="k">&#9654;</span><span>Per-account proxy toggle and bulk edit — including bulk delete with a safety check.</span></li>
+          <li><span class="k">&#9654;</span><span>Every launch logged with the exact command line, so a blank login is diagnosable.</span></li>
+        </ul>
+      </div>
+      <div class="rv">
+        <div class="panel">
+          <div class="panel-top"><span class="wc"><b></b><b></b><b></b></span><span class="panel-title">system &middot; resources</span><span class="panel-live"><i></i>LIVE</span></div>
+          <div class="panel-body">
+            <div class="chips">
+              <div class="chip"><span class="v" style="color:var(--grn-b)">12</span><span class="l">running</span></div>
+              <div class="chip"><span class="v">18</span><span class="l">total</span></div>
+              <div class="chip"><span class="v" style="color:var(--blue)">9</span><span class="l">auto</span></div>
+            </div>
+            <div class="meter">
+              <div class="row"><span class="lab">CPU</span><span class="track"><span class="fill cpu" data-w="41"></span></span><span class="pct">41%</span></div>
+              <div class="row"><span class="lab">RAM</span><span class="track"><span class="fill ram" data-w="63"></span></span><span class="pct">63%</span></div>
+            </div>
+            <div style="margin-top:16px" class="tbl-wrap"><table class="tbl">
+              <tr><th>Account</th><th>Server</th><th>Status</th></tr>
+              <tr><td><b>F22 &middot; Help14</b></td><td><span class="tag t-srv">SS71</span></td><td><span class="tag t-train">RUNNING</span></td></tr>
+              <tr><td><b>Avicii</b></td><td><span class="tag t-srv">SS71</span></td><td><span class="tag t-train">RUNNING</span></td></tr>
+              <tr><td><b>ZELLEME</b></td><td><span class="tag t-srv">200</span></td><td style="color:var(--dim)" class="mono">relaunch 6s</td></tr>
+            </table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHATS NEW -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head rv">
+        <span class="eyebrow" style="color:var(--gold)">Changelog</span>
+        <h2 id="chgTitle">What&rsquo;s new</h2>
+        <p class="lead" id="chgLead">Read live from the update feed, so this page always shows the current release without being touched.</p>
+      </div>
+      <div class="cards" id="chgCards">
+        <div class="card rv"><div class="n">&mdash;</div><h3>Loading the latest release&hellip;</h3><p>Reading the current version and its notes from the same feed the app itself checks.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div id="get"></div>
+  <div class="cta wrap rv">
+    <span class="eyebrow">Ready when you are</span>
+    <h2 style="margin-top:14px">Get OPTiC <span id="verCta"></span></h2>
+    <p class="lead">Self-contained Windows build. Already a user? Just relaunch — it updates itself on next launch.</p>
+    <div class="cta-row">
+      <a class="btn btn-p btn-lg" href="https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest" target="_blank" rel="noopener">Download the installer</a>
+      <a class="btn btn-g btn-lg" href="#tour">Take the tour again</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">OPTiC ACCOUNT MONITOR <span id="verFoot"></span> &middot; <span class="g">it updates itself on next launch</span></div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- reveal on scroll ---- */
+  var rvs = [].slice.call(document.querySelectorAll('.rv'));
+  if(reduce){ rvs.forEach(function(e){e.classList.add('in');}); }
+  else{
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} });
+    },{threshold:.15});
+    rvs.forEach(function(e){ if(!e.classList.contains('in')) io.observe(e); });
+  }
+
+  /* ---- count up ---- */
+  function countUp(el){
+    var to = +el.getAttribute('data-to'), dur = 1300, t0 = null;
+    if(reduce){ el.textContent = to.toLocaleString(); return; }
+    function step(t){
+      if(!t0) t0 = t;
+      var p = Math.min((t-t0)/dur,1), e = 1-Math.pow(1-p,3);
+      el.textContent = Math.round(to*e).toLocaleString();
+      if(p<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var cio = new IntersectionObserver(function(es){
+    es.forEach(function(en){ if(en.isIntersecting){ countUp(en.target); cio.unobserve(en.target);} });
+  },{threshold:.6});
+  [].slice.call(document.querySelectorAll('.cnt')).forEach(function(e){ cio.observe(e); });
+
+  /* ---- meter fills ---- */
+  var mio = new IntersectionObserver(function(es){
+    es.forEach(function(en){ if(en.isIntersecting){ en.target.style.width = en.target.getAttribute('data-w')+'%'; mio.unobserve(en.target);} });
+  },{threshold:.5});
+  [].slice.call(document.querySelectorAll('.fill')).forEach(function(e){ mio.observe(e); });
+
+  /* ---- hero boot sequence ---- */
+  var boot = document.getElementById('boot'), bp = document.getElementById('botpanel');
+  var lines = [
+    ['> ','optic --start'],
+    ['','<b>&#10003;</b> http server &middot; <span class="c">localhost:8080</span>'],
+    ['','<b>&#10003;</b> sqlite &middot; <span class="c">reports.db</span>'],
+    ['','<b>&#10003;</b> monitoring <span class="c">18 accounts</span> &middot; ss71, 200']
+  ];
+  if(reduce || !boot){
+    if(boot) boot.innerHTML = lines.map(function(l){return '<div>'+l[0]+l[1]+'</div>';}).join('');
+    if(bp) bp.style.opacity = 1;
+  } else {
+    var li = 0;
+    function typeLine(){
+      if(li >= lines.length){
+        setTimeout(function(){ bp.style.opacity = 1; },250);
+        return;
+      }
+      var full = lines[li][0]+lines[li][1], div = document.createElement('div');
+      boot.appendChild(div);
+      // reveal instantly for tagged (html) lines, type only the prompt line
+      if(li === 0){
+        var txt = lines[0][0]+lines[0][1], i = 0;
+        div.innerHTML = '<span class="cursor"></span>';
+        (function tick(){
+          i++;
+          div.innerHTML = txt.slice(0,i) + '<span class="cursor"></span>';
+          if(i < txt.length){ setTimeout(tick, 42); }
+          else { div.innerHTML = txt; li++; setTimeout(typeLine, 260); }
+        })();
+      } else {
+        div.style.opacity = 0; div.innerHTML = full;
+        div.style.transition = 'opacity .3s';
+        requestAnimationFrame(function(){ div.style.opacity = 1; });
+        li++; setTimeout(typeLine, 380);
+      }
+    }
+    setTimeout(typeLine, 500);
+  }
+
+  /* ---- tactical map ---- */
+  var cv = document.getElementById('mapcv');
+  if(cv){
+    var ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+    var cols = {you:'#f5c518', ally:'#3fb950', enemy:'#f85149', neu:'#6e7681'};
+    var kinds = [['you',5],['ally',16],['enemy',22],['neu',34]];
+    var pts = [];
+    // deterministic pseudo-random so it looks designed, not noisy
+    var seed = 1337;
+    function rnd(){ seed = (seed*16807) % 2147483647; return (seed-1)/2147483646; }
+    kinds.forEach(function(k){
+      for(var i=0;i<k[1];i++){
+        pts.push({ x:40+rnd()*(W-80), y:40+rnd()*(H-80),
+          c:cols[k[0]], enemy:k[0]==='enemy', r:k[0]==='you'?4.5:3.2, ph:rnd()*6.28 });
+      }
+    });
+    var reduceMap = reduce;
+    var t = 0, sweep = 0;
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      // faint grid
+      ctx.strokeStyle = 'rgba(63,185,80,.05)'; ctx.lineWidth = 1;
+      for(var g=0; g<=W; g+=W/8){ ctx.beginPath(); ctx.moveTo(g,0); ctx.lineTo(g,H); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0,g); ctx.lineTo(W,g); ctx.stroke(); }
+      // radar sweep
+      if(!reduceMap){
+        sweep += 0.012;
+        var cx=W/2, cy=H/2;
+        ctx.save();
+        ctx.translate(cx,cy); ctx.rotate(sweep);
+        var lg = ctx.createLinearGradient(0,0,W*0.6,0);
+        lg.addColorStop(0,'rgba(63,185,80,.18)'); lg.addColorStop(1,'rgba(63,185,80,0)');
+        ctx.fillStyle = lg;
+        ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,W*0.7,-0.14,0.14); ctx.closePath(); ctx.fill();
+        ctx.restore();
+      }
+      // points
+      pts.forEach(function(p){
+        var pulse = reduceMap ? 0 : (Math.sin(t*0.04 + p.ph)*0.5+0.5);
+        if(p.enemy && !reduceMap){
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r+3+pulse*4,0,6.29);
+          ctx.strokeStyle = 'rgba(248,81,73,'+(0.5-pulse*0.4)+')'; ctx.lineWidth=1; ctx.stroke();
+        }
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.29);
+        ctx.fillStyle = p.c; ctx.shadowColor = p.c; ctx.shadowBlur = p.enemy?9:5; ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+      t++;
+      if(!reduceMap) requestAnimationFrame(draw);
+    }
+    draw();
+    var ms = document.getElementById('mapstat');
+    if(ms) ms.textContent = pts.length+' cities · 22 enemy · 5 yours';
+  }
+})();
+
+/* ---- live version ----------------------------------------------------------
+   The page reads the SAME feed the app checks, so shipping a release never means
+   redeploying this site: the version badges and the changelog fill themselves in.
+   This site ships from the repo that holds version.json, so the same-origin copy
+   is preferred - no CORS, and none of raw.githubusercontent's ~5min CDN cache,
+   which ignores cache-busting query strings. The raw URL stays as a fallback for
+   when this file is opened off some other host, or straight off disk. Everything
+   degrades quietly - if both fail the page reads as evergreen, not broken.    */
+(function(){
+  var FEED="/version.json";
+  var RAW="https://raw.githubusercontent.com/OPTiC-DEV-AGE1/optic-monitor/main/version.json";
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function set(id,txt){var e=document.getElementById(id);if(e)e.textContent=txt;}
+  function grab(u){
+    return fetch(u+"?t="+Date.now(),{cache:"no-store"}).then(function(r){
+      if(!r.ok)throw new Error(r.status);
+      return r.json();
+    });
+  }
+  grab(FEED).catch(function(){return grab(RAW);})
+    .then(function(v){
+      var ver=(v&&v.version)||"";
+      if(!ver)return;
+      set("verPill","v"+ver); set("verFoot","· v"+ver); set("verCta","v"+ver);
+      set("chgTitle","New in "+ver);
+      // version.json stores the notes with literal \n separators, so split on the
+      // two-character escape as well as a real newline.
+      var notes=String(v.notes||"").split(/\\n|\n/).map(function(s){return s.trim();}).filter(Boolean);
+      var wrap=document.getElementById("chgCards");
+      if(!wrap||!notes.length)return;
+      wrap.innerHTML=notes.slice(0,6).map(function(txt,i){
+        var head=txt,body="",cut=txt.indexOf(". ");
+        if(cut>0&&cut<95){head=txt.slice(0,cut);body=txt.slice(cut+1).trim();}
+        else if(txt.length>95){head=txt.slice(0,84).replace(/[\s,;:-]+\S*$/,"")+"…";body=txt;}
+        return "<div class='card rv in'><div class='n'>"+("0"+(i+1)).slice(-2)+"</div>"+
+               "<h3>"+esc(head)+"</h3>"+(body?"<p>"+esc(body)+"</p>":"")+"</div>";
+      }).join("");
+      set("chgLead","Straight from the update feed — always the release that is actually out.");
+    })
+    .catch(function(){});
+})();
+</script>
+</body>
+</html>

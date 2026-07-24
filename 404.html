@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Not found · OPTiC Monitor</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0a0d13">
+<style>
+  :root{
+    --bg:#0a0d13; --panel:#111823;
+    --border:#222c38; --border2:#2c3846;
+    --txt:#e9eef5; --dim:#8b98a8; --dim2:#5c6775;
+    --gold:#f5c518; --grn:#3fb950;
+    --mono:"Cascadia Code","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh; background:var(--bg); color:var(--txt);
+    font-family:var(--sans); display:grid; place-items:center; padding:24px;
+  }
+  .wrap{width:100%; max-width:520px; text-align:center}
+  .code{
+    font-family:var(--mono); font-size:13px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--dim2); margin-bottom:18px;
+  }
+  h1{
+    margin:0 0 12px; font-size:clamp(22px,5vw,30px); font-weight:650;
+    letter-spacing:-.01em; text-wrap:balance;
+  }
+  p{margin:0 0 10px; color:var(--dim); line-height:1.6; font-size:15px}
+  .path{
+    font-family:var(--mono); font-size:13px; color:var(--gold);
+    word-break:break-all;
+  }
+  .card{
+    background:var(--panel); border:1px solid var(--border);
+    border-radius:10px; padding:26px 24px; margin-bottom:20px;
+  }
+  .row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+  a.btn{
+    display:inline-block; padding:9px 16px; border-radius:7px;
+    border:1px solid var(--border2); color:var(--txt); text-decoration:none;
+    font-size:14px; transition:border-color .15s, color .15s;
+  }
+  a.btn:hover{border-color:var(--dim2); color:#fff}
+  a.btn.pri{border-color:#3d3213; background:#1a1608; color:var(--gold)}
+  a.btn.pri:hover{border-color:var(--gold)}
+  a.btn:focus-visible{outline:2px solid var(--grn); outline-offset:2px}
+  .lookup{display:none; color:var(--dim); font-size:14px}
+  .lookup.on{display:block}
+  .dot{
+    display:inline-block; width:6px; height:6px; border-radius:50%;
+    background:var(--gold); margin-right:7px; vertical-align:middle;
+    animation:pulse 1.1s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.dot{animation:none;opacity:.7}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="code">Error 404</div>
+  <div class="card">
+    <div id="resolving" class="lookup"><span class="dot"></span>Looking up share link&hellip;</div>
+    <div id="gone">
+      <h1>That page isn&rsquo;t here</h1>
+      <p>Nothing is served at <span class="path" id="path"></span>.</p>
+      <p>If you followed a share link, it may have been mistyped &mdash; share
+         links are case-sensitive.</p>
+    </div>
+  </div>
+  <div class="row">
+    <a class="btn pri" href="/">OPTiC Monitor</a>
+    <a class="btn" href="/report.html">Report viewer</a>
+  </div>
+</div>
+
+<script>
+/* ---- share-link resolver ---------------------------------------------------
+   GitHub Pages serves this file for any path it cannot match, which is what
+   makes short links possible on a static host: opticmonitor.com/h7frpu lands
+   here, and we resolve the code to its full report URL client-side.
+
+   RESOLVER is the lookup endpoint. While it is empty this page is a plain 404
+   and nothing below runs, so shipping it early costs nothing.               */
+(function(){
+  var RESOLVER = "";                 // set to the Apps Script /exec URL
+  var CODE = /^[A-Za-z0-9]{5,12}$/;  // what a short code looks like
+
+  var raw  = location.pathname.replace(/^\/+|\/+$/g, "");
+  var code = raw.indexOf("r/") === 0 ? raw.slice(2) : raw;
+
+  var pathEl = document.getElementById("path");
+  if (pathEl) pathEl.textContent = location.pathname;
+
+  if (!RESOLVER || !CODE.test(code)) return;
+
+  // Only swap to the "looking up" state once we are actually looking something
+  // up, so a genuine 404 never flashes a spinner it will not resolve.
+  document.getElementById("gone").style.display = "none";
+  document.getElementById("resolving").className = "lookup on";
+
+  function fail(){
+    document.getElementById("resolving").className = "lookup";
+    document.getElementById("gone").style.display = "";
+  }
+
+  fetch(RESOLVER + "?r=" + encodeURIComponent(code), {cache:"no-store"})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(j){
+      // Only ever redirect somewhere on this own origin. A lookup table is
+      // remote data, so treat it as untrusted: an absolute URL coming back
+      // from it must not be able to bounce a visitor off-site.
+      var to = j && j.url;
+      if (!to) return fail();
+      var dest = new URL(to, location.origin);
+      if (dest.origin !== location.origin) return fail();
+      location.replace(dest.href);
+    })
+    .catch(fail);
+})();
+</script>
+</body>
+</html>
