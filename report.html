@@ -205,6 +205,8 @@
   #out .gr-hero{display:flex;align-items:center;gap:9px;padding:10px 12px;
     border-bottom:1px solid var(--rule);font-size:14px}
   #out .gr-face img{width:100%;height:100%;object-fit:cover;display:block}
+  /* Sized by height so a boxed field unit and an unboxed siege engine sit level. */
+  .ti{height:19px;width:auto;vertical-align:-5px;margin-right:7px;flex-shrink:0}
   #out .gr-face{width:32px;height:32px;border-radius:3px;flex-shrink:0;display:grid;place-items:center;overflow:hidden;
     background:linear-gradient(180deg,#e8e0c2,#d6cba4);border:1px solid var(--frame);
     font-weight:700;font-size:15px;color:#5d5638}
@@ -378,6 +380,7 @@
 <!-- Loaded before the viewer script so face() can see it. Separate file, not
      inlined: it is 118KB and never changes, so the browser caches it once. -->
 <script src="/faces.js"></script>
+<script src="/troops.js"></script>
 </div>
 
 <script>
@@ -437,6 +440,12 @@ function units(nodes,countAttr,loseAttr){
 }
 
 /* ---------- render: battle ---------- */
+/* Troop icons, cropped from the game and inlined in troops.js - they are
+   embedded bitmaps inside the report SWF, so there is no URL to fetch. */
+function tIcon(id){
+  var src=(window.TROOP_ICON||{})[String(id)];
+  return src?"<img class='ti' src='"+src+"' alt=''>":"";
+}
 /* The hero portrait the game itself shows. It cannot be hotlinked here: the game
    serves it over plain http and has no https at all, so the browser blocks it as
    mixed content. faces.js carries the 33 portraits inlined instead. Falls back to
@@ -473,7 +482,7 @@ function battle(doc){
     var hero=node?node.getAttribute("heroName"):null;
     var lvl=node?node.getAttribute("heroLevel"):null;
     var rows=list.map(function(u){
-      return "<tr><td>"+esc(u.name)+(u.fort?" <span class='gr-dim'>fort</span>":"")+"</td>"+
+      return "<tr><td>"+tIcon(u.id)+esc(u.name)+(u.fort?" <span class='gr-dim'>fort</span>":"")+"</td>"+
         "<td>"+n(u.count)+"</td>"+
         "<td class='"+(u.lose?"gr-cas":"gr-zero")+"'>"+n(u.lose)+"</td></tr>";
     }).join("");
@@ -510,7 +519,7 @@ function battle(doc){
   for(var i=0;i<back.length;i++){
     var id=parseInt(back[i].getAttribute("typeId"),10),r=Number(back[i].getAttribute("remain"))||0;
     if(!r)continue;
-    backRows.push("<tr><td>"+esc(nm(id))+(id>=FORT_MIN?" <span class='z'>fort</span>":"")+"</td><td>"+n(r)+"</td></tr>");
+    backRows.push("<tr><td>"+tIcon(id)+esc(nm(id))+(id>=FORT_MIN?" <span class='z'>fort</span>":"")+"</td><td>"+n(r)+"</td></tr>");
   }
 
   return "<div class='panel' style='margin-top:22px'>"+
@@ -549,7 +558,7 @@ function scout(doc){
   function tbl(list,label){
     if(!list.length)return "<div class='side'><div class='side-h'><div class='side-role'>"+label+
       "</div><div class='side-name' style='font-size:13px;color:var(--dim2)'>None</div></div></div>";
-    var rows=list.map(function(u){return "<tr><td>"+esc(u.name)+"</td><td>"+n(u.count)+"</td></tr>";}).join("");
+    var rows=list.map(function(u){return "<tr><td>"+tIcon(u.id)+esc(u.name)+"</td><td>"+n(u.count)+"</td></tr>";}).join("");
     var tot=0;list.forEach(function(u){tot+=u.count;});
     return "<div class='side'><div class='side-h'><div class='side-role'>"+label+"</div>"+
       "<div class='side-name'>"+n(tot)+"</div></div>"+
