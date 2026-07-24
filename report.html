@@ -227,12 +227,16 @@
     letter-spacing:.06em;margin-top:34px;padding-top:18px;border-top:1px solid var(--border)}
   .hide{display:none!important}
   .empty{text-align:center;padding:44px 20px 8px}
-  .empty-mark{width:62px;height:62px;margin:0 auto 15px;border-radius:18px;display:grid;place-items:center;
-    background:linear-gradient(150deg,#132417,#0c1a10);border:1px solid #234d2c;position:relative}
-  .empty-mark::before{content:"";width:19px;height:19px;border-radius:50%;background:var(--grn-b);
+  .empty-mark{width:66px;height:66px;margin:0 auto 16px;border-radius:19px;display:grid;place-items:center;
+    background:linear-gradient(150deg,#132417,#0c1a10);border:1px solid #234d2c;position:relative;
+    box-shadow:0 12px 34px -14px rgba(63,185,80,.55)}
+  .empty-mark::before{content:"";width:20px;height:20px;border-radius:50%;background:var(--grn-b);
     box-shadow:0 0 26px var(--grn-b),0 0 6px #fff inset}
-  .empty-t{font-size:15px;font-weight:700;letter-spacing:-.01em}
-  .empty-s{font-size:12.5px;color:var(--dim);margin:5px auto 0;max-width:44ch;line-height:1.6}
+  .empty-t{font-size:16px;font-weight:800;letter-spacing:-.01em}
+  .empty-s{font-size:12.5px;color:var(--dim);margin:6px auto 0;max-width:50ch;line-height:1.65}
+  .empty-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+  .empty-chip{font-size:11px;color:var(--dim);background:var(--panel);border:1px solid var(--border);
+    border-radius:100px;padding:5px 12px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -266,8 +270,13 @@
     <div class="empty">
       <div class="empty-mark"></div>
       <div class="empty-t">Your report will appear here</div>
-      <div class="empty-s">Paste a battle or scout report link above and it opens in seconds
-        &mdash; readable, with a link you can send anyone.</div>
+      <div class="empty-s">Paste a battle or scout report link above &mdash; it gets fetched, laid out
+        the way the game does, and given a short link anyone can open.</div>
+      <div class="empty-row">
+        <span class="empty-chip">&#9876;&#65039; Battle &amp; scout reports</span>
+        <span class="empty-chip">&#128279; Short shareable links</span>
+        <span class="empty-chip">&#8734; The full link never expires</span>
+      </div>
     </div>
   </section>
 
