@@ -284,7 +284,10 @@ function battle(doc){
       "<div class='side-role'>"+role+"</div>"+
       "<div class='side-name'>"+esc(king||"Unknown")+"</div>"+
       (hero?"<div class='side-hero'>"+esc(hero)+(lvl?" &middot; level "+esc(lvl):"")+"</div>":"")+
-      "</div><div class='tw'><table><tr><th>Unit</th><th>Sent</th><th>Lost</th><th>Left</th></tr>"+
+      // The defender never "sent" anything - those troops were standing in the
+      // city when the attack landed.
+      "</div><div class='tw'><table><tr><th>Unit</th><th>"+(role==="Defender"?"In Town":"Sent")+
+      "</th><th>Lost</th><th>Left</th></tr>"+
       rows+totals+"</table></div></div>";
   }
 
