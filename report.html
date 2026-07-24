@@ -207,6 +207,8 @@
   #out .gr-face img{width:100%;height:100%;object-fit:cover;display:block}
   /* Sized by height so a boxed field unit and an unboxed siege engine sit level. */
   .ti{height:19px;width:auto;vertical-align:-5px;margin-right:7px;flex-shrink:0}
+  .ri{height:21px;width:auto;vertical-align:-6px;margin-right:6px}
+  #out .gr-loot span{display:inline-flex;align-items:center}
   #out .gr-face{width:32px;height:32px;border-radius:3px;flex-shrink:0;display:grid;place-items:center;overflow:hidden;
     background:linear-gradient(180deg,#e8e0c2,#d6cba4);border:1px solid var(--frame);
     font-weight:700;font-size:15px;color:#5d5638}
@@ -446,6 +448,10 @@ function tIcon(id){
   var src=(window.TROOP_ICON||{})[String(id)];
   return src?"<img class='ti' src='"+src+"' alt=''>":"";
 }
+function rIcon(k){
+  var src=(window.RES_ICON||{})[k];
+  return src?"<img class='ri' src='"+src+"' alt=''>":"";
+}
 /* The hero portrait the game itself shows. It cannot be hotlinked here: the game
    serves it over plain http and has no https at all, so the browser blocks it as
    mixed content. faces.js carries the 33 portraits inlined instead. Falls back to
@@ -510,7 +516,7 @@ function battle(doc){
   var lootRows="";
   if(loot){
     var parts=[["Food","food"],["Lumber","wood"],["Stone","stone"],["Iron","iron"],["Gold","gold"]]
-      .map(function(p){var v=res(p[1]);return v?"<span>"+p[0]+"<b>"+n(v)+"</b></span>":"";})
+      .map(function(p){var v=res(p[1]);return v?"<span>"+rIcon(p[1])+p[0]+"<b>"+n(v)+"</b></span>":"";})
       .join("");
     if(parts)lootRows="<div class='gr-row gr-head'>Resources Plundered</div><div class='gr-loot'>"+parts+"</div>";
   }
@@ -768,11 +774,11 @@ function demo(){
   el("src").value='<reportData><battleReport isAttack="true" isAttackSuccess="true" round="35" heroExp="36991012"'+
     ' injuredPer="10" honor="7239655" support="-2" complaint="2" isSeize="false"'+
     ' seizeProblem="The Loyalty of this city is 98.">'+
-    '<attackTroop king="Attacker" heroName="Hero A" heroLevel="1294">'+
+    '<attackTroop king="Attacker" heroName="Hero A" heroLevel="1294" heroUrl="images/icon/player/faceA19s.png">'+
       '<troopUnit typeId="4" count="100" lose="0"/><troopUnit typeId="7" count="25100" lose="25100"/>'+
       '<troopUnit typeId="8" count="100" lose="0"/><troopUnit typeId="11" count="50000" lose="26545"/>'+
       '<troopUnit typeId="13" count="49000" lose="17279"/></attackTroop>'+
-    '<defendTroop king="Defender" heroName="Hero B" heroLevel="209">'+
+    '<defendTroop king="Defender" heroName="Hero B" heroLevel="209" heroUrl="images/icon/player/faceA1s.png">'+
       '<troopUnit typeId="2" count="45596" lose="45596"/><troopUnit typeId="3" count="35688" lose="35688"/>'+
       '<troopUnit typeId="5" count="41676" lose="41676"/><troopUnit typeId="7" count="41879" lose="41879"/>'+
       '<troopUnit typeId="8" count="1000000" lose="1000000"/><troopUnit typeId="9" count="39685" lose="39685"/>'+
