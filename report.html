@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#0a0d13">
 <meta property="og:type" content="website">
 <meta property="og:title" content="OPTiC Report Viewer">
-<meta property="og:description" content="Evony scout and battle reports, readable and shareable. The whole report travels inside the link.">
+<meta property="og:description" content="Evony scout and battle reports, readable and shareable, with a short link anyone can open.">
 <title>OPTiC Report Viewer</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -56,8 +56,8 @@
 
   /* intake */
   #intake{margin-top:26px}
-  h1{font-size:clamp(22px,4vw,30px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:8px}
-  .lead{color:var(--dim);font-size:14.5px;max-width:62ch;margin-bottom:20px}
+  h1{font-size:clamp(19px,3vw,24px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:6px}
+  .lead{color:var(--dim);font-size:13px;max-width:66ch;margin-bottom:14px}
   /* Fixed height: what goes in here is usually one line, and a drag handle on a
      box nobody needs to enlarge is just clutter. Long XML scrolls. */
   textarea{width:100%;height:96px;background:#080b10;color:var(--txt);border:1px solid var(--border2);
@@ -148,9 +148,15 @@
     border:1px solid var(--frame);
     border-radius:5px;
     box-shadow:0 0 0 1px var(--gold) inset, 0 30px 62px -26px rgba(0,0,0,.9);
+    /* Palatino ahead of Georgia: it is the closer match to the old-document
+       serif the game's own reports use, and it ships on Windows. */
+    --rvserif:"Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
     color:var(--ink);
-    font-family:Georgia,"Times New Roman",serif;
+    font-family:var(--rvserif);
   }
+  /* The dark-page selection colour swallows brown ink. Gold-on-ink instead. */
+  #out ::selection{background:#d8b44a;color:#2a1d08}
+  #out ::-moz-selection{background:#d8b44a;color:#2a1d08}
   /* Banner: the dark bar the in-game report leads with. */
   #out .outcome{
     background:linear-gradient(180deg,#7d5f26,#5a4217);
@@ -161,24 +167,24 @@
     letter-spacing:.005em;text-shadow:0 2px 0 rgba(0,0,0,.4)}
   #out .verdict.win{color:#ffd76a}
   #out .verdict.loss{color:#ffbdae}
-  #out .vsub{font-family:Georgia,serif;color:#e4d4b0;letter-spacing:.1em;font-size:11.5px}
+  #out .vsub{font-family:var(--rvserif);color:#e4d4b0;letter-spacing:.1em;font-size:11.5px}
   #out .stat{border-left-color:rgba(244,233,205,.22)}
-  #out .stat .v{font-family:Georgia,serif;color:#f4e9cd;font-weight:700}
-  #out .stat .l{font-family:Georgia,serif;color:#dcc9a2;letter-spacing:.13em}
+  #out .stat .v{font-family:var(--rvserif);color:#f4e9cd;font-weight:700}
+  #out .stat .l{font-family:var(--rvserif);color:#dcc9a2;letter-spacing:.13em}
 
   #out .side{background:rgba(255,255,255,.34);border:1px solid rgba(109,82,32,.34);border-radius:3px}
   #out .side-h{background:rgba(109,82,32,.11);border-bottom:1px solid rgba(109,82,32,.3)}
-  #out .side-role{font-family:Georgia,serif;font-weight:700}
+  #out .side-role{font-family:var(--rvserif);font-weight:700}
   #out .side.atk .side-role{color:#8f2b1f}
   #out .side.def .side-role{color:#2f5b86}
-  #out .side-name{font-family:Georgia,serif;font-weight:700;color:var(--ink)}
-  #out .side-hero{font-family:Georgia,serif;color:var(--ink2)}
+  #out .side-name{font-family:var(--rvserif);font-weight:700;color:var(--ink)}
+  #out .side-hero{font-family:var(--rvserif);color:var(--ink2)}
 
   #out table{font-size:13px}
-  #out th{font-family:Georgia,serif;color:#5c4620;font-weight:700;letter-spacing:.09em;
+  #out th{font-family:var(--rvserif);color:#5c4620;font-weight:700;letter-spacing:.09em;
     background:rgba(109,82,32,.12);border-bottom:1px solid var(--gold)}
   #out td{color:var(--ink);border-bottom:1px solid rgba(109,82,32,.15)}
-  #out td:first-child{font-family:Georgia,serif}
+  #out td:first-child{font-family:var(--rvserif)}
   #out tr:nth-child(even) td{background:rgba(109,82,32,.045)}
   #out .lose{color:var(--loss)} #out .keep{color:var(--live)} #out .z{color:var(--ink3)}
   #out .tot td{border-top:1px solid var(--gold);background:rgba(109,82,32,.1);font-weight:700}
@@ -187,11 +193,11 @@
   #out .outcome .lose{color:#ffb0a2} #out .outcome .keep{color:#b6e79a}
 
   #out .cell{background:rgba(255,255,255,.34);border:1px solid rgba(109,82,32,.3)}
-  #out .cell .cv{font-family:Georgia,serif;font-weight:700;color:var(--ink)}
-  #out .cell .cl{font-family:Georgia,serif;color:var(--ink2);letter-spacing:.11em}
+  #out .cell .cv{font-family:var(--rvserif);font-weight:700;color:var(--ink)}
+  #out .cell .cl{font-family:var(--rvserif);color:var(--ink2);letter-spacing:.11em}
 
   #out details{background:rgba(255,255,255,.3);border:1px solid rgba(109,82,32,.3);border-radius:3px}
-  #out summary{font-family:Georgia,serif;color:var(--ink2)}
+  #out summary{font-family:var(--rvserif);color:var(--ink2)}
   #out summary:hover{color:var(--ink)}
   #out summary::before{color:var(--gold)}
 
@@ -223,6 +229,7 @@
 <header><div class="wrap bar">
   <span class="logo"></span><a class="brand" href="/">OPTiC</a>
   <span class="sp"></span>
+  <a class="navlink" href="/">Home</a>
   <a class="navlink" href="/feed.html">Top reports</a>
   <span class="kind" id="kind">Report Viewer</span>
 </div></header>
@@ -230,8 +237,11 @@
 <div class="wrap">
 
   <section id="intake">
-    <h1>Evony Report Viewer</h1>
-    <p class="lead">Paste a scout or battle report and get it back readable &mdash; then share it with a link that opens in any browser. Nothing is uploaded: the whole report travels inside the link itself.</p>
+    <!-- This used to promise "nothing is uploaded", which stopped being true when
+         reports began saving to the archive on open. Saying so plainly instead. -->
+    <h1>Report Viewer</h1>
+    <p class="lead">Paste a scout or battle report and get it back readable, with a short link anyone can open.
+       Reports are saved so they can be shared and studied later &mdash; unlisted unless you say otherwise.</p>
     <div class="panel"><div class="p-top"><span class="p-t">paste report</span></div><div class="p-b">
       <textarea id="src" spellcheck="false" placeholder="Paste the report XML here&#10;&#10;(starts with  &lt;reportData ... &gt;)"></textarea>
       <div class="row">
@@ -257,8 +267,8 @@
       </div>
       <div class="p-b">
         <div class="seg" role="tablist" aria-label="Link type">
-          <button role="tab" id="lkFull"  aria-selected="true"  onclick="setLink('full')">Full link</button>
-          <button role="tab" id="lkShort" aria-selected="false" onclick="setLink('short')">Short link</button>
+          <button role="tab" id="lkShort" aria-selected="true"  onclick="setLink('short')">Short link</button>
+          <button role="tab" id="lkFull"  aria-selected="false" onclick="setLink('full')">Full link</button>
         </div>
 
         <div class="share">
@@ -267,16 +277,13 @@
         </div>
         <div class="note" id="linkNote"></div>
 
-        <div id="shortCtl" class="hide">
-          <div class="share">
-            <span class="vlabel">Who can find it</span>
-            <div class="vis" role="group" aria-label="Visibility">
-              <button type="button" id="visPub" aria-pressed="false" onclick="setVis('public')">Public</button>
-              <button type="button" id="visUnl" aria-pressed="true"  onclick="setVis('unlisted')">Unlisted</button>
-            </div>
-            <button class="btn btn-g" id="shortBtn" onclick="makeShort()">Create</button>
+        <div class="share" style="margin-top:13px;padding-top:13px;border-top:1px solid var(--border)">
+          <span class="vlabel">Who can find it</span>
+          <div class="vis" role="group" aria-label="Visibility">
+            <button type="button" id="visPub" aria-pressed="false" onclick="setVis('public')">Public</button>
+            <button type="button" id="visUnl" aria-pressed="true"  onclick="setVis('unlisted')">Unlisted</button>
           </div>
-          <div class="note" id="visNote"></div>
+          <span class="note" id="visNote" style="margin:0"></span>
         </div>
       </div>
     </div>
@@ -458,10 +465,12 @@ function show(txt){
   k.textContent=p.type==="battle"?"Battle Report":"Scout Report";
   k.className="kind "+p.type;
   _parsed=p;
+  _code="";_short="";
   encode(txt).then(function(h){
     _hash=h;
     _full=location.origin+location.pathname+"#"+h;
-    if(_mode==="full")el("shareUrl").value=_full;
+    setLink(_mode);          // full link is usable before the round trip finishes
+    publish();
   });
   window.scrollTo(0,0);
 }
@@ -487,9 +496,9 @@ function reset(){
   el("out").classList.add("hide");el("sharebox").classList.add("hide");
   el("intake").classList.remove("hide");el("src").value="";
   el("kind").textContent="Report Viewer";el("kind").className="kind";
-  _hash="";_parsed=null;_full="";_short="";
+  _hash="";_parsed=null;_full="";_short="";_code="";_vis="unlisted";
   setVis("unlisted");
-  setLink("full");
+  setLink("short");
 }
 function copyShare(){
   var i=el("shareUrl");
@@ -505,29 +514,27 @@ function copyShare(){
    Full and short are two answers to the same question, so they share one field
    and one Copy button instead of stacking two rows the reader has to choose
    between. Full is the default: it needs no server and cannot rot.          */
-var _mode="full", _short="";
+var _mode="short", _short="", _code="";
 
 function setLink(mode){
   _mode=mode;
   el("lkFull").setAttribute("aria-selected",String(mode==="full"));
   el("lkShort").setAttribute("aria-selected",String(mode==="short"));
-  el("shortCtl").classList.toggle("hide",mode!=="short");
   el("copyBtn").textContent="Copy";
   var f=el("shareUrl");
 
   if(mode==="full"){
     f.classList.remove("short");
     f.value=_full;
-    el("linkNote").innerHTML="Opens in any browser, no account needed, and never expires &mdash; "+
-      "the whole report is encoded inside the link itself.";
+    el("linkNote").innerHTML="The whole report is encoded inside this one &mdash; it opens with no "+
+      "server involved at all, so it cannot rot.";
     return;
   }
   f.classList.add("short");
   f.value=_short;
   el("linkNote").innerHTML=_short
-    ? "Short and tidy. It looks the report up when opened, so it needs this site to be online &mdash; "+
-      "the full link above keeps working either way."
-    : "Choose who can find it, then create the link.";
+    ? "Short enough to paste anywhere. Looks the report up when opened."
+    : "Being created&hellip;";
 }
 
 /* ---------- short links ------------------------------------------------------
@@ -547,13 +554,18 @@ function setVis(v){
   el("visPub").setAttribute("aria-pressed",String(v==="public"));
   el("visUnl").setAttribute("aria-pressed",String(v==="unlisted"));
   el("visNote").textContent=VIS_TEXT[v];
-  // Visibility is baked in when the code is minted, so changing it discards the
-  // old link rather than silently changing what it means for whoever already
-  // has it.
-  _short="";
-  el("shortBtn").textContent="Create";
-  el("shortBtn").disabled=false;
-  if(_mode==="short")setLink("short");
+  if(!_code)return;
+  // Edit the row that already exists rather than minting a second code - the
+  // first one may already have been sent to someone.
+  el("visNote").textContent="Updating…";
+  fetch(PUBLISH,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({action:"visibility",code:_code,visibility:v})})
+    .then(function(r){return r.json();})
+    .then(function(j){
+      if(!j||j.result!=="success")throw new Error((j&&j.msg)||"failed");
+      el("visNote").textContent=VIS_TEXT[v];
+    })
+    .catch(function(e){el("visNote").textContent="Could not change that ("+e.message+").";});
 }
 
 function summarize(p){
@@ -589,14 +601,12 @@ function summarize(p){
   return s;
 }
 
-function makeShort(){
-  var b=el("shortBtn");
-  if(!PUBLISH){
-    el("visNote").textContent="Short links are not switched on yet — the full link works now and always will.";
-    return;
-  }
-  if(!_hash||!_parsed){el("visNote").textContent="Still encoding the report — try again in a second.";return;}
-  b.disabled=true;b.textContent="Creating…";
+/* Every report opened here is published, not only the ones somebody chooses to
+   share. That is deliberate: the archive is what the battle calculator gets
+   calibrated against, so a report viewed and not recorded is a report lost.
+   Visibility only decides whether it also shows up in the public feed. */
+function publish(){
+  if(!PUBLISH||!_hash||!_parsed)return;
 
   // text/plain keeps this a "simple" request. Apps Script cannot answer the
   // preflight that application/json would trigger, so the body is JSON but the
@@ -612,13 +622,19 @@ function makeShort(){
   .then(function(r){return r.json();})
   .then(function(j){
     if(!j||j.result!=="success"||!j.code)throw new Error((j&&j.msg)||"no code returned");
+    _code=j.code;
     _short=location.origin+"/"+j.code;
-    b.textContent="Created";
-    setLink("short");           // drop it straight into the field, ready to copy
+    if(_mode==="short")setLink("short");
   })
   .catch(function(e){
-    b.disabled=false;b.textContent="Create";
-    el("visNote").textContent="Could not create a short link ("+e.message+"). The full link still works.";
+    // The full link needs no server at all, so a failed save costs the short
+    // link and the archive row, not the ability to share.
+    _short="";
+    if(_mode==="short"){
+      setLink("full");
+      el("linkNote").innerHTML="Short links are unavailable right now ("+esc(e.message)+
+        "), so this is the full link. It works everywhere and never expires.";
+    }
   });
 }
 function demo(){
@@ -631,7 +647,7 @@ function demo(){
   go();
 }
 setVis("unlisted");   // paint the default choice and its explanation
-setLink("full");
+setLink("short");
 
 // A shared link carries the whole report in its fragment - decode and show it.
 (function(){

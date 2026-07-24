@@ -57,6 +57,12 @@
   .barpill{font-family:var(--mono);font-size:11px;color:var(--grn);border:1px solid #234d2c;
     background:rgba(63,185,80,.08);padding:3px 9px;border-radius:100px;letter-spacing:.05em}
   .bar .sp{flex:1}
+  .toplink{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--dim);text-decoration:none;padding:5px 10px;border-radius:100px;
+    border:1px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+  .toplink:hover{color:var(--grn-b);border-color:var(--border2)}
+  .toplink:focus-visible{outline:2px solid var(--grn);outline-offset:2px}
+  @media(max-width:720px){.toplink{display:none}}
   .btn{font-family:var(--sans);font-weight:700;font-size:13px;border-radius:9px;cursor:pointer;
     text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:transform .12s,box-shadow .2s,background .2s;border:1px solid transparent}
   .btn:active{transform:translateY(1px)}
@@ -267,7 +273,10 @@
     <div class="brand"><span class="logo"></span><b>OPTiC</b></div>
     <span class="barpill" id="verPill">latest</span>
     <span class="sp"></span>
-    <a class="btn btn-g" href="#tour">Feature tour</a>
+    <!-- The web tools are usable without installing anything, so they belong in
+         the bar next to the download rather than buried in the page. -->
+    <a class="toplink" href="/report.html">Report viewer</a>
+    <a class="toplink" href="/feed.html">Top reports</a>
     <a class="btn btn-p" href="#get">Get it &rarr;</a>
   </div>
 </header>
