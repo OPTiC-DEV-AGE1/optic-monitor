@@ -223,9 +223,10 @@ function card(r,i){
 }
 
 function empty(win){
-  return "<div class='state'><h2>Nothing shared "+(win==="week"?"this week":"today")+" yet</h2>"+
-    "<p>Reports land here as soon as someone shares one publicly. "+
-    "Open a report in the <a href='/report.html'>viewer</a>, choose <b>Public</b>, and create a short link.</p>"+
+  return "<div class='state'><h2>No battles "+(win==="week"?"this week":"today")+" yet</h2>"+
+    "<p>Battle reports land here as soon as someone opens one, ranked by troops killed. "+
+    "Open one in the <a href='/report.html'>viewer</a> and it is in &mdash; there is nothing else to press. "+
+    "Scout reports are not ranked here.</p>"+
     (win==="day"?"<p style='margin-top:9px'>Try <a href='#' onclick=\"load('week');return false\">this week</a> for a wider window.</p>":"")+
     "</div>";
 }
@@ -243,7 +244,12 @@ function load(win){
     .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
     .then(function(j){
       if(!j||j.result!=="success")throw new Error((j&&j.msg)||"bad response");
-      var list=j.reports||[];
+      // Battles only. This board ranks by troops killed, and a scout report
+      // kills nothing - it would sit at the bottom forever taking up room. It
+      // is also somebody's city intel, which is a different thing to publish
+      // on a leaderboard than a fight you chose to have. Scout reports still
+      // share and open normally; they just do not get ranked.
+      var list=(j.reports||[]).filter(function(r){return r.kind==="battle";});
       cache[win]=list;
       // A late reply for a tab the reader already left must not overwrite it.
       if(current===win)render(list,win);
@@ -257,7 +263,7 @@ function load(win){
 }
 
 function render(list,win){
-  el("rankby").textContent=list.length?("ranked by troops killed · "+list.length+" report"+(list.length===1?"":"s")):"";
+  el("rankby").textContent=list.length?("ranked by troops killed · "+list.length+" battle"+(list.length===1?"":"s")):"";
   el("out").innerHTML=list.length
     ? "<div class='list'>"+list.map(card).join("")+"</div>"
     : empty(win);

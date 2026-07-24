@@ -237,6 +237,22 @@
   #out .gr-loot b{font-family:var(--mono);font-variant-numeric:tabular-nums;margin-left:5px}
   #out .gr-dim{color:var(--ink3)}
 
+  /* Scout reports are ONE two-column sheet in the game - a bold section header
+     row, then name/value rows under it - not a set of cards. */
+  #out .gr-sec td{font-weight:700;color:var(--ink);padding-top:16px;
+    border-bottom:1px solid var(--rule)}
+  #out .gr-sec td:last-child{font-family:var(--rvserif);font-size:13px;color:var(--ink2)}
+  #out .gr-sec:first-child td{padding-top:7px}
+  /* The game keeps the value column right beside the label - a fixed offset,
+     not the far edge of the frame. Stretched to 100% the two ends drift so far
+     apart on a wide window that you lose which number belongs to which row, so
+     cap it and sit it in the middle. */
+  #out .gr-scout{width:auto;min-width:min(100%,420px);max-width:580px;margin:0 auto}
+  #out .gr-scout td:first-child{width:200px}
+  #out .gr-scout td:last-child,#out .gr-scout th:last-child{text-align:left}
+  #out .gr-note{padding:12px 14px;font-size:12.5px;color:var(--ink2);
+    border-top:1px solid var(--rule);font-style:italic}
+
   /* scout reports and the survivors block keep the same sheet */
   #out .outcome{background:var(--strip);border-bottom:2px solid var(--rule);padding:16px 14px 14px}
   #out .verdict{font-family:var(--rvserif);font-weight:700}
@@ -389,9 +405,20 @@
 // typeId map - identical across scout and battle reports. 2-13 are troops,
 // 14-18 fortifications. 8/9/10 verified against live reports as transport /
 // cavalry / cataphract (they are easy to get backwards).
-var UNIT={0:"—",1:"—",2:"Worker",3:"Warrior",4:"Scout",5:"Pikeman",6:"Swordsman",
+// The game's own spellings - it writes Pikemen and Swordsmen plural, and
+// Archer's Tower with the apostrophe. People read these next to the in-game
+// report, so a singular reads as a mistake.
+var UNIT={0:"—",1:"—",2:"Worker",3:"Warrior",4:"Scout",5:"Pikemen",6:"Swordsmen",
   7:"Archer",8:"Transport",9:"Cavalry",10:"Cataphract",11:"Ballista",12:"Battering Ram",
-  13:"Catapult",14:"Trap",15:"Abatis",16:"Archer Tower",17:"Rolling Log",18:"Trebuchet"};
+  13:"Catapult",14:"Trap",15:"Abatis",16:"Archer's Tower",17:"Rolling Log",18:"Trebuchet"};
+// Research, keyed by the id a scout report actually carries. Confirmed against
+// a live report: the node is <techs><techType type level>, the attribute is
+// "type" and NOT "typeId" like troops and forts use, and the ids run 1-20 with
+// 6 absent - exactly the 19 lines the game prints, in the order it prints them.
+var TECH={1:"Agriculture",2:"Lumbering",3:"Masonry",4:"Mining",5:"Metal Casting",
+  7:"Informatics",8:"Military Science",9:"Military Tradition",10:"Iron Working",
+  11:"Logistics",12:"Compass",13:"Horseback Riding",14:"Archery",15:"Stockpile",
+  16:"Construction",17:"Medicine",18:"Machinery",19:"Engineering",20:"Privateering"};
 var FORT_MIN=14;
 function nm(id){return UNIT[id]||("Type "+id);}
 function n(v){v=Number(v)||0;return v.toLocaleString();}
@@ -550,45 +577,85 @@ function battle(doc){
   "</div>";
 }
 
+/* The game renders a scout report as ONE two-column sheet - a bold section
+   header row, then name/value rows beneath it - in a fixed order:
+   Resource|Amount, City Survey, Construction|Level, Fortification|Amount,
+   Troop|Amount, Technology|Level. It omits rows whose value is zero. This
+   matches that rather than inventing a dashboard of cards, because players read
+   these side by side with the report the game itself shows them. */
 function scout(doc){
   var si=doc.querySelector("scoutInfo");
-  var loy=si?Number(si.getAttribute("support")):null;
-  var gold=si?Number(si.getAttribute("gold")):0;
-  var pop=si?Number(si.getAttribute("population")):0;
+  function ga(k){return si?si.getAttribute(k):null;}
   function res(t){var e=doc.querySelector("resource > "+t);return e?Number(e.textContent)||0:0;}
-  var food=res("food"),wood=res("wood"),stone=res("stone"),iron=res("iron");
-  var tr=units(doc.querySelectorAll("troops troopStrType"),"count",null);
-  var ft=units(doc.querySelectorAll("fortifications fortificationsType"),"count",null);
-  var troopTotal=0;tr.forEach(function(u){troopTotal+=u.count;});
 
-  function tbl(list,label){
-    if(!list.length)return "<div class='side'><div class='side-h'><div class='side-role'>"+label+
-      "</div><div class='side-name' style='font-size:13px;color:var(--dim2)'>None</div></div></div>";
-    var rows=list.map(function(u){return "<tr><td>"+tIcon(u.id)+esc(u.name)+"</td><td>"+n(u.count)+"</td></tr>";}).join("");
-    var tot=0;list.forEach(function(u){tot+=u.count;});
-    return "<div class='side'><div class='side-h'><div class='side-role'>"+label+"</div>"+
-      "<div class='side-name'>"+n(tot)+"</div></div>"+
-      "<div class='tw'><table><tr><th>Unit</th><th>Count</th></tr>"+rows+"</table></div></div>";
+  var out=[];
+  function sec(label,right){out.push("<tr class='gr-sec'><td>"+label+"</td><td>"+(right||"")+"</td></tr>");}
+  function row(label,val,icon){out.push("<tr><td>"+(icon||"")+esc(label)+"</td><td>"+val+"</td></tr>");}
+
+  sec("Resource","Amount");
+  [["Food","food"],["Lumber","wood"],["Stone","stone"],["Iron","iron"]].forEach(function(p){
+    var v=res(p[1]);if(v)row(p[0],n(v),rIcon(p[1]));
+  });
+  var gold=Number(ga("gold"))||0;
+  if(gold)row("Gold",n(gold),rIcon("gold"));
+
+  sec("City Survey","");
+  var pop=Number(ga("population"))||0,loy=ga("support");
+  if(pop)row("Population",n(pop));
+  // Loyalty is the one number worth colouring - it is what says whether the
+  // city can be taken - so it borrows the casualty ink below 30.
+  if(loy!==null&&loy!=="")row("Loyalty","<span class='"+(Number(loy)<=30?"gr-cas":"")+"'>"+esc(loy)+"</span>");
+
+  var ft=units(doc.querySelectorAll("fortifications fortificationsType"),"count",null);
+  if(ft.length){
+    sec("Fortification","Amount");
+    ft.forEach(function(u){if(u.count)row(u.name,n(u.count),tIcon(u.id));});
   }
-  var loyCls=loy==null?"":(loy<=30?"lose":(loy<=60?"":"keep"));
+  var tr=units(doc.querySelectorAll("troops troopStrType"),"count",null);
+  var tot=0;tr.forEach(function(u){tot+=u.count;});
+  if(tr.length){
+    sec("Troop","Amount");
+    tr.forEach(function(u){if(u.count)row(u.name,n(u.count),tIcon(u.id));});
+  }
+  if(!tot)out.push("<tr><td colspan='2' class='gr-dim'>No troops defending this city.</td></tr>");
+
+  var tech=doc.querySelectorAll("techs techType"),tl=[];
+  for(var i=0;i<tech.length;i++){
+    var tid=parseInt(tech[i].getAttribute("type"),10);
+    var lv=Number(tech[i].getAttribute("level"))||0;
+    if(lv)tl.push({id:tid,name:TECH[tid]||("Research #"+tid),lv:lv});
+  }
+  // The XML hands them over out of order - a real report had 17 before 16 and
+  // 19 before 18 - while the game always prints them by id. Sort, do not trust
+  // document order.
+  tl.sort(function(a,b){return a.id-b.id;});
+  if(tl.length){sec("Technology","Level");tl.forEach(function(t){row(t.name,n(t.lv));});}
+
+  /* <buildings> is deliberately not rendered. It carries buildingType type=N
+     levels="10,10,9,..." - a COUNT of buildings of that type with a level each,
+     not one number - and there is no confirmed id->name table for it, so the
+     honest options are a wall of "#24: 10,10,10" or nothing. The game leaves
+     its Construction section empty at low Informatics too. */
+  var known={troops:1,fortifications:1,resource:1,resources:1,buildings:1,techs:1};
+  if(si)for(var g0=0;g0<si.children.length;g0++){
+    var g=si.children[g0],gn=(g.tagName||"").toLowerCase();
+    if(known[gn]||!g.children.length)continue;
+    var items=[];
+    for(var j=0;j<g.children.length;j++){
+      var e=g.children[j];
+      var id=parseInt(e.getAttribute("typeId")||e.getAttribute("type"),10);
+      var v=Number(e.getAttribute("level")||e.getAttribute("count")||e.textContent)||0;
+      if(!v)continue;
+      items.push([e.getAttribute("name")||("#"+(isNaN(id)?j+1:id)),v]);
+    }
+    if(!items.length)continue;
+    sec(esc(g.tagName),"Amount");
+    items.forEach(function(it){row(it[0],n(it[1]));});
+  }
 
   return "<div class='panel' style='margin-top:22px'>"+
-    "<div class='outcome'>"+
-      "<div class='verdict "+(troopTotal?"":"win")+"'>"+(troopTotal?n(troopTotal)+" troops defending":"Undefended")+"</div>"+
-      "<div class='vsub'>scout report</div>"+
-      "<div class='stats'>"+
-        (loy!=null?"<div class='stat'><div class='v "+loyCls+"'>"+n(loy)+"</div><div class='l'>loyalty</div></div>":"")+
-        "<div class='stat'><div class='v' style='color:var(--gold)'>"+n(gold)+"</div><div class='l'>gold</div></div>"+
-        (pop?"<div class='stat'><div class='v'>"+n(pop)+"</div><div class='l'>population</div></div>":"")+
-      "</div>"+
-    "</div>"+
-    "<div class='grid4'>"+
-      "<div class='cell'><div class='cv'>"+n(food)+"</div><div class='cl'>food</div></div>"+
-      "<div class='cell'><div class='cv'>"+n(wood)+"</div><div class='cl'>wood</div></div>"+
-      "<div class='cell'><div class='cv'>"+n(stone)+"</div><div class='cl'>stone</div></div>"+
-      "<div class='cell'><div class='cv'>"+n(iron)+"</div><div class='cl'>iron</div></div>"+
-    "</div>"+
-    "<div class='two'>"+tbl(tr,"Troops")+tbl(ft,"Fortifications")+"</div>"+
+    "<div class='tw'><table class='gr-t gr-scout'>"+out.join("")+"</table></div>"+
+    "<div class='gr-note'>You can get more detailed intelligence by upgrading the Informatics.</div>"+
   "</div>";
 }
 
@@ -792,19 +859,36 @@ function demo(){
 }
 setLink();
 
-// A shared link carries the whole report in its fragment - decode and show it.
+/* Two ways in besides pasting.
+
+   #<payload>  - a share link, carrying the whole report compressed in the
+                 fragment. Needs nothing from any server.
+   ?url=<xml>  - a game report link handed straight to the viewer, so a script
+                 or a bot can deep-link a report instead of asking someone to
+                 copy and paste it. It runs the same path a paste does: the
+                 report server fetches it, because a browser cannot.
+
+   The fragment wins if both are present - it is a complete report, the query
+   param is only a pointer to one. */
 (function(){
   var h=location.hash.slice(1);
-  if(!h)return;
-  decode(h).then(function(txt){
-    try{show(txt);}catch(e){
-      el("warn").innerHTML="<b>That shared link could not be read.</b> "+esc(e.message);
+  if(h){
+    decode(h).then(function(txt){
+      try{show(txt);}catch(e){
+        el("warn").innerHTML="<b>That shared link could not be read.</b> "+esc(e.message);
+        el("warn").style.display="block";
+      }
+    }).catch(function(){
+      el("warn").innerHTML="<b>That shared link is damaged or incomplete.</b> It may have been cut short when it was copied.";
       el("warn").style.display="block";
-    }
-  }).catch(function(){
-    el("warn").innerHTML="<b>That shared link is damaged or incomplete.</b> It may have been cut short when it was copied.";
-    el("warn").style.display="block";
-  });
+    });
+    return;
+  }
+  var q=null;
+  try{q=new URLSearchParams(location.search).get("url")||new URLSearchParams(location.search).get("xml");}catch(e){}
+  if(!q)return;
+  el("src").value=q;
+  go();
 })();
 </script>
 </body>
