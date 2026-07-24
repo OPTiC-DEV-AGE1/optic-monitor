@@ -121,8 +121,16 @@
   details[open] summary::before{transform:rotate(90deg)}
 
   .share{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px}
-  #shareUrl{flex:1;min-width:220px;background:#080b10;border:1px solid var(--border2);border-radius:9px;
+  #shareUrl,#shortUrl{flex:1;min-width:220px;background:#080b10;border:1px solid var(--border2);border-radius:9px;
     padding:9px 11px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+  #shortUrl{color:var(--grn-b);font-size:13px}
+  .vis{display:flex;gap:0;border:1px solid var(--border2);border-radius:9px;overflow:hidden}
+  .vis button{font-family:var(--sans);font-size:12px;font-weight:600;padding:8px 14px;cursor:pointer;
+    background:transparent;border:0;color:var(--dim);transition:background .15s,color .15s}
+  .vis button[aria-pressed="true"]{background:var(--panel2);color:var(--grn-b)}
+  .vis button:focus-visible{outline:2px solid var(--grn);outline-offset:-2px}
+  .sep{height:1px;background:var(--border);margin:14px 0}
+  .vlabel{font-size:12px;color:var(--dim);margin-right:2px}
   footer{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim2);
     letter-spacing:.06em;margin-top:34px;padding-top:18px;border-top:1px solid var(--border)}
   .hide{display:none!important}
@@ -161,6 +169,23 @@
         <button class="btn btn-g" onclick="reset()">New report</button>
       </div>
       <div class="note">Anyone with this link sees the same report &mdash; no account, no app, works in any browser. The link never expires because the report is encoded inside it.</div>
+
+      <div class="sep"></div>
+
+      <div class="share" style="margin-top:0">
+        <span class="vlabel">Short link:</span>
+        <div class="vis" role="group" aria-label="Who can find this report">
+          <button type="button" id="visPub" aria-pressed="false" onclick="setVis('public')">Public</button>
+          <button type="button" id="visUnl" aria-pressed="true"  onclick="setVis('unlisted')">Unlisted</button>
+        </div>
+        <button class="btn btn-g" id="shortBtn" onclick="makeShort()">Create short link</button>
+      </div>
+      <div class="note" id="visNote"></div>
+
+      <div class="share hide" id="shortRow">
+        <input id="shortUrl" readonly>
+        <button class="btn btn-p" onclick="copyShort()" id="copyShortBtn">Copy</button>
+      </div>
     </div></div>
   </section>
 
@@ -336,7 +361,9 @@ function show(txt){
   var k=el("kind");
   k.textContent=p.type==="battle"?"Battle Report":"Scout Report";
   k.className="kind "+p.type;
+  _parsed=p;
   encode(txt).then(function(h){
+    _hash=h;
     el("shareUrl").value=location.origin+location.pathname+"#"+h;
   });
   window.scrollTo(0,0);
@@ -363,6 +390,8 @@ function reset(){
   el("out").classList.add("hide");el("sharebox").classList.add("hide");
   el("intake").classList.remove("hide");el("src").value="";
   el("kind").textContent="Report Viewer";el("kind").className="kind";
+  _hash="";_parsed=null;
+  setVis("unlisted");
 }
 function copyShare(){
   var i=el("shareUrl");i.select();
@@ -370,6 +399,104 @@ function copyShare(){
   try{ok=document.execCommand("copy");}catch(e){}
   if(navigator.clipboard&&!ok)navigator.clipboard.writeText(i.value).catch(function(){});
   var b=el("copyBtn"),t=b.textContent;b.textContent="Copied";setTimeout(function(){b.textContent=t;},1400);
+}
+
+/* ---------- short links ------------------------------------------------------
+   The long link above is self-contained and needs no server, so it keeps working
+   whatever happens to this one. A short link is the convenience layer on top:
+   it costs a lookup, so it is opt-in rather than the default.                  */
+var PUBLISH="";            // Apps Script /exec URL - blank disables short links
+var _vis="unlisted", _hash="", _parsed=null;
+
+var VIS_TEXT={
+  "public":  "Anyone can find this in Reports of the Day and Reports of the Week.",
+  "unlisted":"Only people you send the link to can open it. It stays out of the feeds."
+};
+
+function setVis(v){
+  _vis=v;
+  el("visPub").setAttribute("aria-pressed",String(v==="public"));
+  el("visUnl").setAttribute("aria-pressed",String(v==="unlisted"));
+  el("visNote").textContent=VIS_TEXT[v];
+  // Visibility is baked in when the code is minted, so an existing short link
+  // does not silently change meaning underneath the person who already shared it.
+  el("shortRow").classList.add("hide");
+  el("shortBtn").textContent="Create short link";
+  el("shortBtn").disabled=false;
+}
+
+function summarize(p){
+  var d=p.doc,s={};
+  if(p.type==="battle"){
+    var br=d.querySelector("battleReport"),at=d.querySelector("attackTroop"),df=d.querySelector("defendTroop");
+    if(br){
+      s.rounds=br.getAttribute("round")||"";
+      s.injuredPer=br.getAttribute("injuredPer")||"";
+      s.honor=Number(br.getAttribute("honor"))||0;
+      s.attackWon=br.getAttribute("isAttackSuccess")==="true";
+    }
+    if(at){s.attacker=at.getAttribute("king")||"";s.atkHero=at.getAttribute("heroName")||"";s.atkLevel=at.getAttribute("heroLevel")||"";}
+    if(df){s.defender=df.getAttribute("king")||"";s.defHero=df.getAttribute("heroName")||"";s.defLevel=df.getAttribute("heroLevel")||"";}
+    function side(node){
+      if(!node)return [];
+      return units(node.querySelectorAll("troopUnit"),"count","lose").map(function(u){
+        return {unit:u.name,sent:u.count,lost:u.lose};
+      });
+    }
+    s.atkTroops=side(at); s.defTroops=side(df);
+    s.backTroops=[].map.call(d.querySelectorAll("backTroop troopInfo"),function(t){
+      return {unit:nm(parseInt(t.getAttribute("typeId"),10)),remain:Number(t.getAttribute("remain"))||0};
+    }).filter(function(x){return x.remain;});
+  }else{
+    var si=d.querySelector("scoutInfo");
+    if(si){
+      s.gold=si.getAttribute("gold")||"";
+      s.population=si.getAttribute("population")||"";
+      s.support=si.getAttribute("support")||"";
+    }
+  }
+  return s;
+}
+
+function makeShort(){
+  var b=el("shortBtn");
+  if(!PUBLISH){
+    el("visNote").textContent="Short links are not switched on yet — the long link above works now and always will.";
+    return;
+  }
+  if(!_hash||!_parsed){el("visNote").textContent="Still encoding the report — try again in a second.";return;}
+  b.disabled=true;b.textContent="Creating…";
+
+  // text/plain keeps this a "simple" request. Apps Script cannot answer the
+  // preflight that application/json would trigger, so the body is JSON but the
+  // header deliberately is not.
+  fetch(PUBLISH,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({
+      action:"publish",kind:_parsed.type,visibility:_vis,
+      payload:_hash,summary:summarize(_parsed),meta:_parsed.meta||{}
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(j){
+    if(!j||j.result!=="success"||!j.code)throw new Error((j&&j.msg)||"no code returned");
+    el("shortUrl").value=location.origin+"/"+j.code;
+    el("shortRow").classList.remove("hide");
+    b.textContent="Created";
+  })
+  .catch(function(e){
+    b.disabled=false;b.textContent="Create short link";
+    el("visNote").textContent="Could not create a short link ("+e.message+"). The long link above still works.";
+  });
+}
+
+function copyShort(){
+  var i=el("shortUrl");i.select();
+  var ok=false;
+  try{ok=document.execCommand("copy");}catch(e){}
+  if(navigator.clipboard&&!ok)navigator.clipboard.writeText(i.value).catch(function(){});
+  var b=el("copyShortBtn");b.textContent="Copied";setTimeout(function(){b.textContent="Copy";},1400);
 }
 function demo(){
   el("src").value='<reportData><battleReport isAttack="false" isAttackSuccess="false" round="8" injuredPer="13" honor="-201067">'+
@@ -380,6 +507,8 @@ function demo(){
     '</battleReport></reportData>';
   go();
 }
+setVis("unlisted");   // paint the default choice and its explanation
+
 // A shared link carries the whole report in its fragment - decode and show it.
 (function(){
   var h=location.hash.slice(1);
