@@ -1,6 +1,6 @@
 {
-    "version":  "1.33.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.33.0.exe",
-    "notes":  "Attack alerts now break out every incoming wave - attacker, origin, exact troops and arrival time, on Discord and in the app.\\nScout alerts: know the moment you are scouted, even though scouts never show as incoming.\\nYour fleet reliably relaunches after a crash or reboot: forced auto-launch plus a Start with Windows option.\\nA New version available button so you can update without restarting.\\nA branded home screen instead of a blank landing tab.",
+    "version":  "1.33.1",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.33.1.exe",
+    "notes":  "Stay-fresh fix: OPTiC no longer goes stale in the background, so no more restarting every day to keep alerts and the server switch working.\\nScout Target Alerts: get a Discord ping the moment you scout a city that is capturable, low on troops, or sitting on a pile of resources.\\nAttack alerts now ignore your own hero-leveling and trebbing - set a troop floor and only real hits page you.\\nDeeper scout reports: every troop type, all fortifications and gold, with a full breakdown when you click a report.",
     "mandatory":  false
 }
