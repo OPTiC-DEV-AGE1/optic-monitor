@@ -57,15 +57,20 @@
   /* intake */
   #intake{margin-top:26px}
   h1{font-size:clamp(20px,3vw,26px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:5px}
-  .lead{color:var(--dim);font-size:13px;max-width:66ch}
-  .rv-head{display:flex;gap:15px;align-items:flex-start;margin-bottom:16px}
+  .lead{color:var(--dim);font-size:13px;max-width:62ch;margin:0 auto}
+  .rv-head{display:flex;gap:15px;align-items:center;justify-content:center;
+    text-align:center;margin-bottom:18px}
   .rv-badge{width:52px;height:52px;flex-shrink:0;border-radius:15px;position:relative;
     display:grid;place-items:center;background:linear-gradient(150deg,#132417,#0c1a10);
     border:1px solid #234d2c;box-shadow:0 10px 28px -12px rgba(63,185,80,.6)}
   .rv-badge::before{content:"";width:17px;height:17px;border-radius:50%;background:var(--grn-b);
     box-shadow:0 0 22px var(--grn-b),0 0 5px #fff inset}
   @media(max-width:520px){.rv-badge{display:none}}
-  .intake-bar{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+  /* The intake is one centred column - a left-aligned bar over a centred filler
+     read as two unrelated things stacked. */
+  .intake-bar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;justify-content:center;
+    max-width:660px;margin:0 auto}
+  .theme-row{display:flex;justify-content:center;margin-top:11px}
   #src{flex:1;min-width:250px;height:42px;background:#080b10;color:var(--txt);
     border:1px solid var(--border2);border-radius:10px;padding:0 14px;
     font-family:var(--mono);font-size:12.5px;transition:border-color .15s,box-shadow .15s}
@@ -319,6 +324,8 @@
       <input id="src" spellcheck="false" placeholder="Paste a report link, or the report XML">
       <button class="btn btn-p" onclick="go()">Open</button>
       <button class="btn btn-g" onclick="demo()">Example</button>
+    </div>
+    <div class="theme-row">
       <div class="seg" role="group" aria-label="Report theme" title="Report theme">
         <button type="button" data-th="" onclick="theme('')">Classic</button>
         <button type="button" data-th="t-parchment" onclick="theme('t-parchment')">Parchment</button>
