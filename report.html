@@ -56,12 +56,22 @@
 
   /* intake */
   #intake{margin-top:26px}
-  h1{font-size:clamp(19px,3vw,24px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:6px}
-  .lead{color:var(--dim);font-size:13px;max-width:66ch;margin-bottom:14px}
-  /* Fixed and short: what goes in here is usually one line, and a drag handle on
-     a box nobody needs to enlarge is just clutter. Long XML scrolls. */
-  textarea{width:100%;height:62px;background:#080b10;color:var(--txt);border:1px solid var(--border2);
-    border-radius:10px;padding:10px 13px;font-family:var(--mono);font-size:12px;line-height:1.5;resize:none}
+  h1{font-size:clamp(20px,3vw,26px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:5px}
+  .lead{color:var(--dim);font-size:13px;max-width:66ch}
+  .rv-head{display:flex;gap:15px;align-items:flex-start;margin-bottom:16px}
+  .rv-badge{width:52px;height:52px;flex-shrink:0;border-radius:15px;position:relative;
+    display:grid;place-items:center;background:linear-gradient(150deg,#132417,#0c1a10);
+    border:1px solid #234d2c;box-shadow:0 10px 28px -12px rgba(63,185,80,.6)}
+  .rv-badge::before{content:"";width:17px;height:17px;border-radius:50%;background:var(--grn-b);
+    box-shadow:0 0 22px var(--grn-b),0 0 5px #fff inset}
+  @media(max-width:520px){.rv-badge{display:none}}
+  .intake-bar{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+  #src{flex:1;min-width:250px;height:42px;background:#080b10;color:var(--txt);
+    border:1px solid var(--border2);border-radius:10px;padding:0 14px;
+    font-family:var(--mono);font-size:12.5px;transition:border-color .15s,box-shadow .15s}
+  #src::placeholder{color:var(--dim2)}
+  #src:focus{outline:none;border-color:var(--grn);box-shadow:0 0 0 3px rgba(63,185,80,.12)}
+  .intake-bar .btn{height:42px}
   textarea:focus{outline:none;border-color:var(--grn);box-shadow:0 0 0 3px rgba(63,185,80,.12)}
   textarea::placeholder{color:var(--dim2)}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
@@ -127,82 +137,108 @@
   details[open] summary::before{transform:rotate(90deg)}
 
   /* ── The report sheet ────────────────────────────────────────────────────────
-     Players read these against the report the game itself shows, so the rendered
-     report drops the dark UI and becomes a parchment document laid on it: brown
-     ink, gold rule, a banner headline. Everything is scoped under #out, so the
-     page chrome around it stays dark and nothing else is disturbed.
+     Modelled on the report the game itself shows, because that is what everyone
+     is used to reading: a near-white sheet inside an olive-gold frame, hairline
+     rules between rows, two columns of Troop / Amount / Casualty, and the battle
+     summary as a plain list underneath.
 
-     Numbers keep the monospace face even here. The game uses a pixel font that
-     is period-correct and hard to read at four digits; columns that line up are
+     The earlier version of this was a much browner parchment. It looked the part
+     but it was not what the game does - the real thing is close to white, and
+     matching it matters more than the mood.
+
+     Numbers keep the monospace face. The game uses a pixel font that is
+     period-correct and hard to read at four digits; columns that line up are
      worth more than that last bit of fidelity. */
   #out .panel{
-    /* ink2/ink3 are darker than they look like they need to be: measured
-       against the parchment, the lighter values landed under 4.5:1. */
-    --ink:#3a2a12; --ink2:#6b5636; --ink3:#877349;
-    --sheet:#efe3c4; --gold:#b8912f; --frame:#6d5220;
-    --loss:#9c2b21; --live:#3d6b2c;
-    background:
-      radial-gradient(900px 320px at 50% -10%,rgba(255,255,255,.30),transparent 62%),
-      repeating-linear-gradient(94deg,rgba(109,82,32,.035) 0 2px,transparent 2px 5px),
-      var(--sheet);
-    border:1px solid var(--frame);
-    border-radius:5px;
-    box-shadow:0 0 0 1px var(--gold) inset, 0 30px 62px -26px rgba(0,0,0,.9);
-    /* Palatino ahead of Georgia: it is the closer match to the old-document
-       serif the game's own reports use, and it ships on Windows. */
+    --ink:#33312b; --ink2:#6f6a58; --ink3:#948e79;
+    --sheet:#fffdf5; --rule:#ddd3ab; --frame:#a89446; --strip:#f5f0dd;
+    --loss:#a3312a; --live:#3d6b2c;
     --rvserif:"Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    background:var(--sheet);
+    border:2px solid var(--frame);
+    border-radius:3px;
+    box-shadow:0 22px 50px -28px rgba(0,0,0,.85);
     color:var(--ink);
     font-family:var(--rvserif);
+    overflow:hidden;
   }
-  /* The dark-page selection colour swallows brown ink. Gold-on-ink instead. */
-  #out ::selection{background:#d8b44a;color:#2a1d08}
-  #out ::-moz-selection{background:#d8b44a;color:#2a1d08}
-  /* Just enough to show which row the pointer is on. These tables are a document
-     to read, not a list to pick from, so anything stronger is noise. */
-  #out tbody tr:hover td{background:rgba(109,82,32,.09)}
-  /* Banner: the dark bar the in-game report leads with. */
-  #out .outcome{
-    background:linear-gradient(180deg,#7d5f26,#5a4217);
-    border-bottom:2px solid var(--gold);
-    padding:19px 16px 16px;
-  }
-  #out .verdict{font-family:Georgia,"Times New Roman",serif;font-weight:700;
-    letter-spacing:.005em;text-shadow:0 2px 0 rgba(0,0,0,.4)}
-  #out .verdict.win{color:#ffd76a}
-  #out .verdict.loss{color:#ffbdae}
-  #out .vsub{font-family:var(--rvserif);color:#e4d4b0;letter-spacing:.1em;font-size:11.5px}
-  #out .stat{border-left-color:rgba(244,233,205,.22)}
-  #out .stat .v{font-family:var(--rvserif);color:#f4e9cd;font-weight:700}
-  #out .stat .l{font-family:var(--rvserif);color:#dcc9a2;letter-spacing:.13em}
+  /* The dark-page selection colour swallows this sheet's text. */
+  #out ::selection{background:#e6d38a;color:#241f10}
+  #out ::-moz-selection{background:#e6d38a;color:#241f10}
 
-  #out .side{background:rgba(255,255,255,.34);border:1px solid rgba(109,82,32,.34);border-radius:3px}
-  #out .side-h{background:rgba(109,82,32,.11);border-bottom:1px solid rgba(109,82,32,.3)}
+  /* two army columns */
+  #out .gr-two{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  #out .gr-two > * + *{border-left:1px solid var(--rule)}
+  @media(max-width:700px){
+    #out .gr-two{grid-template-columns:1fr}
+    #out .gr-two > * + *{border-left:0;border-top:2px solid var(--rule)}
+  }
+  #out .gr-sh{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;
+    padding:9px 12px;background:var(--strip);border-bottom:1px solid var(--rule);font-size:13px}
+  #out .gr-sh b{font-weight:700}
+  #out .gr-king{font-weight:700}
+  #out .gr-win{margin-left:auto;color:var(--live);font-weight:700}
+  #out .gr-lost{margin-left:auto;color:var(--loss);font-weight:700}
+  #out .gr-hero{display:flex;align-items:center;gap:9px;padding:10px 12px;
+    border-bottom:1px solid var(--rule);font-size:14px}
+  #out .gr-face{width:32px;height:32px;border-radius:3px;flex-shrink:0;display:grid;place-items:center;
+    background:linear-gradient(180deg,#e8e0c2,#d6cba4);border:1px solid var(--frame);
+    font-weight:700;font-size:15px;color:#5d5638}
+  #out .gr-lvl{color:var(--ink2)}
+  #out .gr-tw{overflow-x:auto}
+  #out .gr-t{width:100%;border-collapse:collapse;font-size:13px}
+  #out .gr-t th{text-align:right;padding:7px 12px;font-weight:700;color:var(--ink2);
+    border-bottom:1px solid var(--rule);font-size:12px}
+  #out .gr-t th:first-child{text-align:left}
+  #out .gr-t td{text-align:right;padding:6px 12px;border-bottom:1px solid #efe9d2;
+    font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12.5px}
+  #out .gr-t td:first-child{text-align:left;font-family:var(--rvserif);font-size:13px}
+  #out .gr-t tr:last-child td{border-bottom:none}
+  #out .gr-cas{color:var(--loss)}
+  #out .gr-zero{color:var(--ink3)}
+
+  /* the summary list the game prints under the two armies */
+  #out .gr-sum{border-top:2px solid var(--rule)}
+  #out .gr-row{display:flex;gap:10px;padding:7px 14px;border-bottom:1px solid #efe9d2;font-size:13px}
+  #out .gr-row:last-child{border-bottom:none}
+  #out .gr-l{color:var(--ink2)}
+  #out .gr-v{margin-left:auto;font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:700}
+  #out .gr-head{font-weight:700}
+  #out .gr-loot{display:flex;gap:16px;flex-wrap:wrap;padding:10px 14px}
+  #out .gr-loot span{font-size:13px}
+  #out .gr-loot b{font-family:var(--mono);font-variant-numeric:tabular-nums;margin-left:5px}
+  #out .gr-dim{color:var(--ink3)}
+
+  /* scout reports and the survivors block keep the same sheet */
+  #out .outcome{background:var(--strip);border-bottom:2px solid var(--rule);padding:16px 14px 14px}
+  #out .verdict{font-family:var(--rvserif);font-weight:700}
+  #out .verdict.win{color:var(--live)} #out .verdict.loss{color:var(--loss)}
+  #out .vsub{font-family:var(--rvserif);color:var(--ink2);letter-spacing:.09em;font-size:11.5px}
+  #out .stat{border-left-color:var(--rule)}
+  #out .stat .v{font-family:var(--rvserif);color:var(--ink);font-weight:700}
+  #out .stat .l{font-family:var(--rvserif);color:var(--ink2);letter-spacing:.12em}
+  #out .side{background:#fffefa;border:1px solid var(--rule);border-radius:2px}
+  #out .side-h{background:var(--strip);border-bottom:1px solid var(--rule)}
   #out .side-role{font-family:var(--rvserif);font-weight:700}
   #out .side.atk .side-role{color:#8f2b1f}
   #out .side.def .side-role{color:#2f5b86}
   #out .side-name{font-family:var(--rvserif);font-weight:700;color:var(--ink)}
   #out .side-hero{font-family:var(--rvserif);color:var(--ink2)}
-
   #out table{font-size:13px}
-  #out th{font-family:var(--rvserif);color:#5c4620;font-weight:700;letter-spacing:.09em;
-    background:rgba(109,82,32,.12);border-bottom:1px solid var(--gold)}
-  #out td{color:var(--ink);border-bottom:1px solid rgba(109,82,32,.15)}
+  #out th{font-family:var(--rvserif);color:var(--ink2);font-weight:700;letter-spacing:.04em;
+    background:var(--strip);border-bottom:1px solid var(--rule)}
+  #out td{color:var(--ink);border-bottom:1px solid #efe9d2}
   #out td:first-child{font-family:var(--rvserif)}
-  #out tr:nth-child(even) td{background:rgba(109,82,32,.045)}
   #out .lose{color:var(--loss)} #out .keep{color:var(--live)} #out .z{color:var(--ink3)}
-  #out .tot td{border-top:1px solid var(--gold);background:rgba(109,82,32,.1);font-weight:700}
-  /* The banner sits on dark ground, so the ink-on-parchment reds and greens
-     above would disappear into it. These must stay after them to win. */
-  #out .outcome .lose{color:#ffb0a2} #out .outcome .keep{color:#b6e79a}
-
-  #out .cell{background:rgba(255,255,255,.34);border:1px solid rgba(109,82,32,.3)}
+  #out .tot td{border-top:1px solid var(--frame);background:var(--strip);font-weight:700}
+  #out tbody tr:hover td{background:rgba(168,148,70,.10)}
+  #out .cell{background:#fffefa;border:1px solid var(--rule);border-radius:2px}
   #out .cell .cv{font-family:var(--rvserif);font-weight:700;color:var(--ink)}
   #out .cell .cl{font-family:var(--rvserif);color:var(--ink2);letter-spacing:.11em}
-
-  #out details{background:rgba(255,255,255,.3);border:1px solid rgba(109,82,32,.3);border-radius:3px}
+  #out details{background:#fffefa;border:1px solid var(--rule);border-radius:2px}
   #out summary{font-family:var(--rvserif);color:var(--ink2)}
   #out summary:hover{color:var(--ink)}
-  #out summary::before{color:var(--gold)}
+  #out summary::before{color:var(--frame)}
 
   .share{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
   #shareUrl{flex:1;min-width:220px;background:#080b10;border:1px solid var(--border2);border-radius:9px;
@@ -253,17 +289,23 @@
   <section id="intake">
     <!-- This used to promise "nothing is uploaded", which stopped being true when
          reports began saving to the archive on open. Saying so plainly instead. -->
-    <h1>Report Viewer</h1>
-    <p class="lead">Paste a scout or battle report and get it back readable, with a short link anyone can open.
-       Reports are saved so they can be shared and studied later &mdash; unlisted unless you say otherwise.</p>
-    <div class="panel"><div class="p-top"><span class="p-t">paste report</span></div><div class="p-b">
-      <textarea id="src" spellcheck="false" placeholder="Paste the report XML here&#10;&#10;(starts with  &lt;reportData ... &gt;)"></textarea>
-      <div class="row">
-        <button class="btn btn-p" onclick="go()">Render report</button>
-        <button class="btn btn-g" onclick="demo()">Load an example</button>
+    <div class="rv-head">
+      <span class="rv-badge"></span>
+      <div>
+        <h1>Report Viewer</h1>
+        <p class="lead">Paste a scout or battle report and get it back laid out the way the game does,
+           with a short link anyone can open. Reports are saved so they can be shared and studied
+           later &mdash; unlisted unless you say otherwise.</p>
       </div>
-      <div class="warn" id="warn"></div>
-    </div></div>
+    </div>
+    <!-- One line, because what goes in here is one line. It takes pasted XML too
+         - an input scrolls it just as well as a box four times the size. -->
+    <div class="intake-bar">
+      <input id="src" spellcheck="false" placeholder="Paste a report link, or the report XML">
+      <button class="btn btn-p" onclick="go()">Open</button>
+      <button class="btn btn-g" onclick="demo()">Example</button>
+    </div>
+    <div class="warn" id="warn"></div>
 
     <!-- The page was a headline and an empty box before this. It lives inside
          #intake so it disappears with it the moment a report renders. -->
@@ -384,41 +426,62 @@ function units(nodes,countAttr,loseAttr){
 }
 
 /* ---------- render: battle ---------- */
+/* Laid out the way the game lays it out: two army columns of Troop / Amount /
+   Casualty, then the run of summary lines underneath, then what was plundered.
+   "Amount" rather than Sent/In Town because that is the game's own word, and it
+   is the one word that is correct for an attacker and a defender alike. */
 function battle(doc){
   var br=doc.querySelector("battleReport");
   var win=br.getAttribute("isAttackSuccess")==="true";
   var rounds=br.getAttribute("round")||"?";
   var honor=Number(br.getAttribute("honor"))||0;
   var inj=br.getAttribute("injuredPer");
+  var hexp=br.getAttribute("heroExp");
+  var sup=br.getAttribute("support");
+  var comp=br.getAttribute("complaint");
+  var seizeMsg=br.getAttribute("seizeProblem")||"";
+  var isSeize=br.getAttribute("isSeize")==="true";
   var at=doc.querySelector("attackTroop"),df=doc.querySelector("defendTroop");
   var aU=units(at?at.querySelectorAll("troopUnit"):[],"count","lose");
   var dU=units(df?df.querySelectorAll("troopUnit"):[],"count","lose");
   var back=doc.querySelectorAll("backTroop troopInfo");
 
-  function sideHtml(node,list,role,cls){
+  function army(node,list,role,whose,won){
     var king=node?node.getAttribute("king"):null;
     var hero=node?node.getAttribute("heroName"):null;
     var lvl=node?node.getAttribute("heroLevel"):null;
-    var sent=0,lost=0;
-    list.forEach(function(u){sent+=u.count;lost+=u.lose;});
     var rows=list.map(function(u){
-      var surv=u.count-u.lose;
-      return "<tr><td>"+esc(u.name)+(u.fort?" <span class='z'>fort</span>":"")+"</td>"+
+      return "<tr><td>"+esc(u.name)+(u.fort?" <span class='gr-dim'>fort</span>":"")+"</td>"+
         "<td>"+n(u.count)+"</td>"+
-        "<td class='"+(u.lose?"lose":"z")+"'>"+(u.lose?"-"+n(u.lose):"0")+"</td>"+
-        "<td class='"+(surv>0?"keep":"z")+"'>"+n(surv)+"</td></tr>";}).join("");
-    if(!rows)rows="<tr><td colspan='4' class='z'>Nothing recorded</td></tr>";
-    var totals=list.length>1?("<tr class='tot'><td>Total</td><td>"+n(sent)+"</td><td class='lose'>-"+n(lost)+
-      "</td><td class='keep'>"+n(sent-lost)+"</td></tr>"):"";
-    return "<div class='side "+cls+"'><div class='side-h'>"+
-      "<div class='side-role'>"+role+"</div>"+
-      "<div class='side-name'>"+esc(king||"Unknown")+"</div>"+
-      (hero?"<div class='side-hero'>"+esc(hero)+(lvl?" &middot; level "+esc(lvl):"")+"</div>":"")+
-      // The defender never "sent" anything - those troops were standing in the
-      // city when the attack landed.
-      "</div><div class='tw'><table><tr><th>Unit</th><th>"+(role==="Defender"?"In Town":"Sent")+
-      "</th><th>Lost</th><th>Left</th></tr>"+
-      rows+totals+"</table></div></div>";
+        "<td class='"+(u.lose?"gr-cas":"gr-zero")+"'>"+n(u.lose)+"</td></tr>";
+    }).join("");
+    if(!rows)rows="<tr><td colspan='3' class='gr-dim'>Nothing recorded</td></tr>";
+    return "<div>"+
+      "<div class='gr-sh'><b>"+role+"</b><span class='gr-dim'>"+whose+"</span>"+
+        "<span class='gr-king'>"+esc(king||"Unknown")+"</span>"+
+        "<span class='"+(won?"gr-win":"gr-lost")+"'>"+(won?"Victory":"Defeat")+"</span></div>"+
+      "<div class='gr-hero'><span class='gr-face'>"+esc((hero||"?").charAt(0).toUpperCase())+"</span>"+
+        "<span><b>"+esc(hero||"Unknown")+"</b>"+
+        (lvl?" <span class='gr-lvl'>(Level "+esc(lvl)+")</span>":"")+"</span></div>"+
+      "<div class='gr-tw'><table class='gr-t'>"+
+        "<tr><th>Troop</th><th>Amount</th><th>Casualty</th></tr>"+rows+"</table></div>"+
+    "</div>";
+  }
+
+  function row(label,val,cls){
+    if(val===null||val===undefined||val==="")return "";
+    return "<div class='gr-row'><span class='gr-l'>"+label+"</span>"+
+      "<span class='gr-v"+(cls?" "+cls:"")+"'>"+val+"</span></div>";
+  }
+
+  var loot=doc.querySelector("lootResource");
+  function res(t){var e=loot?loot.querySelector(t):null;return e?Number(e.textContent)||0:0;}
+  var lootRows="";
+  if(loot){
+    var parts=[["Food","food"],["Lumber","wood"],["Stone","stone"],["Iron","iron"],["Gold","gold"]]
+      .map(function(p){var v=res(p[1]);return v?"<span>"+p[0]+"<b>"+n(v)+"</b></span>":"";})
+      .join("");
+    if(parts)lootRows="<div class='gr-row gr-head'>Resources Plundered</div><div class='gr-loot'>"+parts+"</div>";
   }
 
   var backRows=[];
@@ -429,22 +492,27 @@ function battle(doc){
   }
 
   return "<div class='panel' style='margin-top:22px'>"+
-    "<div class='outcome'>"+
-      "<div class='verdict "+(win?"win":"loss")+"'>"+(win?"Attack succeeded":"Attack failed")+"</div>"+
-      "<div class='vsub'>"+(win?"the attacker broke through":"the defender held")+"</div>"+
-      "<div class='stats'>"+
-        "<div class='stat'><div class='v'>"+esc(rounds)+"</div><div class='l'>rounds</div></div>"+
-        "<div class='stat'><div class='v "+(honor<0?"lose":"keep")+"'>"+(honor>0?"+":"")+n(honor)+"</div><div class='l'>honor</div></div>"+
-        (inj?"<div class='stat'><div class='v'>"+esc(inj)+"%</div><div class='l'>injured</div></div>":"")+
-      "</div>"+
+    "<div class='gr-two'>"+
+      army(at,aU,"Offenders","(Our Side)",win)+
+      army(df,dU,"Defender","(Enemy&rsquo;s Side)",!win)+
     "</div>"+
-    "<div class='vs'>"+sideHtml(at,aU,"Attacker","atk")+sideHtml(df,dU,"Defender","def")+"</div>"+
-    (backRows.length?("<details><summary>Defender&rsquo;s surviving forces ("+backRows.length+" types)</summary>"+
+    "<div class='gr-sum'>"+
+      "<div class='gr-row gr-head'>Fight lasted "+esc(rounds)+" round(s), "+
+        (win?"Offenders won":"Defenders won")+"</div>"+
+      row("Wounded Proportion",inj?esc(inj)+"%":"")+
+      row("Honor",(honor>0?"+":"")+n(honor),honor<0?"gr-cas":"")+
+      row("Experience Gained by Hero",hexp?n(hexp):"")+
+      row("Loyalty Trend",sup?esc(sup):"")+
+      row("Public Grievance Trend",comp?esc(comp):"")+
+      (seizeMsg?"<div class='gr-row'>"+esc(seizeMsg)+"</div>":"")+
+      "<div class='gr-row'>"+(isSeize?"Conquer Successfully":"Conquer Unsuccessfully")+"</div>"+
+      lootRows+
+    "</div>"+
+    (backRows.length?("<details><summary>Surviving forces that marched home ("+backRows.length+" types)</summary>"+
       "<div class='tw'><table><tr><th>Unit</th><th>Remaining</th></tr>"+backRows.join("")+"</table></div></details>"):"")+
   "</div>";
 }
 
-/* ---------- render: scout ---------- */
 function scout(doc){
   var si=doc.querySelector("scoutInfo");
   var loy=si?Number(si.getAttribute("support")):null;
@@ -717,13 +785,26 @@ function publish(){
   return _pub;
 }
 function demo(){
-  // Placeholder names on purpose - a sample report should not put a real
-  // player's name and hero in front of everyone who clicks the example.
-  el("src").value='<reportData><battleReport isAttack="false" isAttackSuccess="false" round="8" injuredPer="13" honor="-201067">'+
-    '<attackTroop king="Attacker" heroName="Hero A" heroLevel="662"><troopUnit typeId="4" count="15000" lose="15000"/></attackTroop>'+
-    '<defendTroop king="Defender" heroName="Hero B" heroLevel="610"><troopUnit typeId="18" count="7193" lose="5473"/><troopUnit typeId="15" count="1" lose="0"/></defendTroop>'+
-    '<backTroop><troops><troopInfo typeId="18" remain="6536"/><troopInfo typeId="7" remain="80331711"/>'+
-    '<troopInfo typeId="10" remain="18976027"/><troopInfo typeId="13" remain="12260987"/></troops></backTroop>'+
+  // Modelled on a real conquer attempt so the example exercises every part of the
+  // layout - both armies, the summary lines, the plunder row and the march home.
+  // Names are placeholders: a sample should not put real players in front of
+  // everyone who clicks it.
+  el("src").value='<reportData><battleReport isAttack="true" isAttackSuccess="true" round="35" heroExp="36991012"'+
+    ' injuredPer="10" honor="7239655" support="-2" complaint="2" isSeize="false"'+
+    ' seizeProblem="The Loyalty of this city is 98.">'+
+    '<attackTroop king="Attacker" heroName="Hero A" heroLevel="1294">'+
+      '<troopUnit typeId="4" count="100" lose="0"/><troopUnit typeId="7" count="25100" lose="25100"/>'+
+      '<troopUnit typeId="8" count="100" lose="0"/><troopUnit typeId="11" count="50000" lose="26545"/>'+
+      '<troopUnit typeId="13" count="49000" lose="17279"/></attackTroop>'+
+    '<defendTroop king="Defender" heroName="Hero B" heroLevel="209">'+
+      '<troopUnit typeId="2" count="45596" lose="45596"/><troopUnit typeId="3" count="35688" lose="35688"/>'+
+      '<troopUnit typeId="5" count="41676" lose="41676"/><troopUnit typeId="7" count="41879" lose="41879"/>'+
+      '<troopUnit typeId="8" count="1000000" lose="1000000"/><troopUnit typeId="9" count="39685" lose="39685"/>'+
+      '<troopUnit typeId="10" count="33705" lose="33705"/><troopUnit typeId="15" count="5000" lose="500"/>'+
+      '<troopUnit typeId="16" count="15000" lose="15000"/></defendTroop>'+
+    '<lootResource><food>304</food><wood>304</wood><iron>304</iron><stone>304</stone><gold>7399780</gold></lootResource>'+
+    '<backTroop><troops><troopInfo typeId="4" remain="100"/><troopInfo typeId="8" remain="100"/>'+
+      '<troopInfo typeId="11" remain="23455"/><troopInfo typeId="13" remain="31721"/></troops></backTroop>'+
     '</battleReport></reportData>';
   go();
 }
