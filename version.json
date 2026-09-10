@@ -1,6 +1,6 @@
 {
-    "version":  "1.41.21",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.21.exe",
+    "version":  "1.41.20",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.20.exe",
     "notes":  "When OPTiC cannot open its port and the dashboard will not load, that screen now works out why instead of guessing.\n\nIt names the program holding port 8080 where Windows will say which, recognises a second OPTiC running under another Windows user, and recognises the missing port permission that stops a lot of first runs - each with the fix that actually works for it. Where the program cannot be named you get the exact command that names it.\n\nAlso: the Auto-launch tile no longer grows and shrinks while a launch queue is running.\n\nNothing you need to do after updating.",
     "mandatory":  false
 }
