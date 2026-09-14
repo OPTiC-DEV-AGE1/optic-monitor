@@ -1,6 +1,6 @@
 {
-    "version":  "1.41.23",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.23.exe",
-    "notes":  "Bug fixes.",
+    "version":  "1.41.24",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.24.exe",
+    "notes":  "Troubleshooting and diagnosing licence server errors.\n\nThe licence server sleeps when nobody has used it for a while, and the first check after that can take longer to answer than OPTiC was prepared to wait. That was being reported as \"Offline - running on your last verified licence\", which was alarming and wrong: in almost every case the licence had verified perfectly a few minutes earlier.\n\nOPTiC now waits longer for that first answer, and if it still does not arrive while you have plenty of cover left, it quietly asks again instead of raising an alarm. A licence server that is genuinely unreachable still tells you, and still tells you how long you have.\n\nNothing you need to do after updating.",
     "mandatory":  false
 }
