@@ -1,6 +1,6 @@
 {
-    "version":  "1.41.25",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.25.exe",
-    "notes":  "Proxy errors now name the real cause.\n\nA proxy answering \"407\" was reported as needing a username and password. On most providers it means this PC\u0027s IP is not on their allowed list - a different fix, in a different place. Both are named now, and OPTiC\u0027s own proxy test tells you which, because it connects from your machine rather than from the provider\u0027s.\n\nAlso in this release: the Settings page no longer overwrites fields while you are typing in them, a failed save no longer reports success, a city panel could show another city\u0027s walls, incoming-attack alerts survive a Discord hiccup, dismissing one food alert no longer silences it for a year, and Ctrl+K now finds any setting by name.\n\nNothing you need to do after updating.",
+    "version":  "1.41.26",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.26.exe",
+    "notes":  "OPTiC opens straight away.\n\nIt no longer waits on the licence server to start up. Once your key has been verified on a PC it stays verified, and the \"Offline - running on your last verified licence\" message is gone for good.\n\nNew: a Report a bug button in the top bar. Say what happened, paste a screenshot with Ctrl+V, send.\n\nAlso in this release: two lighter themes (Parchment and Light) for anyone who finds the dark ones hard to read, buttons and boxes you can actually see on every theme, and you can now choose which kinds of activity show in the list instead of filtering to one at a time. Plus a number of smaller fixes.\n\nNothing you need to do after updating.",
     "mandatory":  false
 }
