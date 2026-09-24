@@ -1,6 +1,6 @@
 {
-    "version":  "1.41.27",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.27.exe",
-    "notes":  "The Hero Index was missing heroes.\n\nAn account that names several heroes the same only ever showed one of each, and up to a quarter of every sweep never reached the table. They are all there now — the full list fills in on the next Hero Index sweep.\n\nRanks read correctly again, and the Hero Index finally has its own Clear button; the old \"Heroes\" one only ever cleared your own accounts.\n\nAlso: choosing a Specific Exe no longer shows a false warning about the bot folder.\n\nNothing you need to do after updating.",
+    "version":  "1.41.28",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.28.exe",
+    "notes":  "Bug fixes and maintenance.\n\nNothing you need to do after updating.",
     "mandatory":  false
 }
