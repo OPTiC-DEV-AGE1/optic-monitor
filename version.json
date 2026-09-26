@@ -1,6 +1,6 @@
 {
-    "version":  "1.41.28",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.28.exe",
-    "notes":  "Bug fixes and maintenance.\n\nNothing you need to do after updating.",
+    "version":  "1.41.29",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.29.exe",
+    "notes":  "VIP now applies on the next launch, with no deactivate and re-activate.\nThe proxy test no longer reports working proxies as failed.\nProxy lists accept the http:// spelling.\nNo Google Sheets error if you do not use it, and a broken link is now reported.\nHero attack lines up again, with an optional Base ATK column.\nColumns can be dragged wider.\n\nNothing you need to do after updating.",
     "mandatory":  false
 }
