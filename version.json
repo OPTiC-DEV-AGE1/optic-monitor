@@ -1,6 +1,6 @@
 {
-    "version":  "1.41.31",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.31.exe",
-    "notes":  "Discord alerts can now go to a different channel for each server, and accounts that get attacked constantly can be silenced without hiding them in the app.\n\nAlert Rules opens in its own window instead of sending you to Settings, there is a searchable FAQ in the app, and startup is faster.\n\nNothing you need to do after updating.",
+    "version":  "1.41.32",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.32.exe",
+    "notes":  "Bug fixes.\n\nQuiet accounts now has its own account picker and fills in wherever you open Alert Rules from.\n\nNothing you need to do after updating.",
     "mandatory":  false
 }
