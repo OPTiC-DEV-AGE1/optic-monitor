@@ -1,6 +1,6 @@
 {
-    "version":  "1.41.34",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.34.exe",
-    "notes":  "Prepend and append goals have moved into the profile editor.\n\nOpen a bot with the pencil, or select several and use Bulk edit. The sets themselves are still written on the Automation tab.\n\nNothing you need to do after updating.",
+    "version":  "1.41.35",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.35.exe",
+    "notes":  "The prepend and append goal boxes now have a Browse... button, the same as the bot exe path.\n\nWorth using: the bot never complains about a goals file it cannot find, so a mistyped path simply does nothing.\n\nNothing you need to do after updating.",
     "mandatory":  false
 }
