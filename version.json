@@ -1,6 +1,6 @@
 {
-    "version":  "1.41.32",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.32.exe",
-    "notes":  "Bug fixes.\n\nQuiet accounts now has its own account picker and fills in wherever you open Alert Rules from.\n\nNothing you need to do after updating.",
+    "version":  "1.41.33",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.33.exe",
+    "notes":  "Prepend and append goals, set per account from the Bots page.\n\nImporting from Botfather now brings your proxy list across as well, and Botfather 2 rosters import too.\n\nRestoring an accounts backup no longer drops per-account settings.\n\nNothing you need to do after updating.",
     "mandatory":  false
 }
