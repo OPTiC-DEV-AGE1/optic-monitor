@@ -1,6 +1,6 @@
 {
-    "version":  "1.41.36",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.36.exe",
-    "notes":  "Right-click an account on the Bots page to copy its login, apply an item, or jump straight to it on the Accounts, Cities or Heroes page.\n\nPenicillin and Excalibur can be applied to a whole selection now, without opening each account. Excalibur picks each account\u0027s highest-attack hero.\n\nYou can rewrite the Discord alert wording yourself under Alert Rules, and the Failed Scouts page now says why a report failed.\n\nIf you use Radius Scout, re-paste it - it is now v4.5.",
+    "version":  "1.41.37",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.37.exe",
+    "notes":  "Fixes new installs: adding a bot or importing from Director failed with \"no such table: BotProfiles\". If that happened to you, install this update - it repairs itself on the next start.\n\nAlso: the same login can be added on two servers without a name clash, installs on non-English Windows keep opening, and accounts you turned off on purpose can be cleared from the Dashboard\u0027s Offline list.",
     "mandatory":  false
 }
