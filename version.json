@@ -1,6 +1,6 @@
 {
-    "version":  "1.41.37",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.37.exe",
-    "notes":  "Fixes new installs: adding a bot or importing from Director failed with \"no such table: BotProfiles\". If that happened to you, install this update - it repairs itself on the next start.\n\nAlso: the same login can be added on two servers without a name clash, installs on non-English Windows keep opening, and accounts you turned off on purpose can be cleared from the Dashboard\u0027s Offline list.",
+    "version":  "1.41.38",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.38.exe",
+    "notes":  "Settings, Automation and Alert Rules have a cleaner layout - each setting on its own row with a line saying what it does, and every change saves on its own (no Save buttons).\n\nImport bots now sits right beside Add Bot, so bringing your accounts across from Director or Botfather is easy to find.\n\nExcalibur was removed from Items: a bot can only use it on heroes in the city running its autorun. Penicillin is unchanged.",
     "mandatory":  false
 }
