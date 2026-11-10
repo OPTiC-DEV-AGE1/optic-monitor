@@ -1,6 +1,6 @@
 {
-    "version":  "1.41.38",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.41.38.exe",
-    "notes":  "Settings, Automation and Alert Rules have a cleaner layout - each setting on its own row with a line saying what it does, and every change saves on its own (no Save buttons).\n\nImport bots now sits right beside Add Bot, so bringing your accounts across from Director or Botfather is easy to find.\n\nExcalibur was removed from Items: a bot can only use it on heroes in the city running its autorun. Penicillin is unchanged.",
+    "version":  "1.42.0",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.42.0.exe",
+    "notes":  "Introducing OPTiC BOT, our own bot, free for everyone. One window per account, laid out like NEAT, running your NEAT goals and scripts as they are and bringing them over from NEAT the first time it logs an account in.\n\nIt works with OPTiC: pick NEAT or OPTiC BOT for each account, start and stop it from the Bots page with its live status, and Edit profile settings, Items and Live City Scripts reach it directly. New Uptime view.\n\nAlso: Auto-Restart no longer loops, new map colours, Add Bot refuses a login already on the list, Live City Scripts keeps your city on refresh, scripts no longer follow a city after a teleport, and old scout reports stay quiet after a restart.",
     "mandatory":  false
 }
