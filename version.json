@@ -1,6 +1,6 @@
 {
-    "version":  "1.42.1",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.42.1.exe",
-    "notes":  "OPTiC BOT is free for everyone, laid out like NEAT and running your NEAT goals and scripts as they are. Download it: https://github.com/OPTiC-DEV-AGE1/optic-bot-releases/releases/latest\n\nThis update: Excalibur in Bulk edit for accounts in OPTiC BOT windows, a Download OPTiC BOT link in Automation and Add Bot, and Bulk edit names any account an item could not be queued for.\n\nOPTiC BOT 1.0.259: minimized windows go to the tray, plain ip:port proxies work as in NEAT and stay connected, and NEAT goal files work as written. Open one bot window yourself and click Update to get it.",
+    "version":  "1.42.2",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.42.2.exe",
+    "notes":  "A tidier Bots page: the OPTiC BOT counts are on the Uptime button and the O badges line up. An account set to the wrong bot program is no longer started over and over: Start says what is wrong. Alliance Chat Watch is fed by your OPTiC BOT windows.\n\nOPTiC BOT 1.0.265: Delete all army reports, NEAT autorun settings carried over, a map like NEAT’s with the cities listed beside it, panes that fit the window, and NEAT’s SearchCastles in scripts. Open one bot window yourself and click Update to get it, or download it: https://github.com/OPTiC-DEV-AGE1/optic-bot-releases/releases/latest",
     "mandatory":  false
 }
