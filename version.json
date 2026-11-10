@@ -1,6 +1,6 @@
 {
-    "version":  "1.42.0",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.42.0.exe",
-    "notes":  "Introducing OPTiC BOT, our own bot, free for everyone. One window per account, laid out like NEAT, running your NEAT goals and scripts as they are and bringing them over from NEAT the first time it logs an account in.\n\nIt works with OPTiC: pick NEAT or OPTiC BOT for each account, start and stop it from the Bots page with its live status, and Edit profile settings, Items and Live City Scripts reach it directly. New Uptime view.\n\nAlso: Auto-Restart no longer loops, new map colours, Add Bot refuses a login already on the list, Live City Scripts keeps your city on refresh, scripts no longer follow a city after a teleport, and old scout reports stay quiet after a restart.",
+    "version":  "1.42.1",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.42.1.exe",
+    "notes":  "OPTiC BOT is free for everyone, laid out like NEAT and running your NEAT goals and scripts as they are. Download it: https://github.com/OPTiC-DEV-AGE1/optic-bot-releases/releases/latest\n\nThis update: Excalibur in Bulk edit for accounts in OPTiC BOT windows, a Download OPTiC BOT link in Automation and Add Bot, and Bulk edit names any account an item could not be queued for.\n\nOPTiC BOT 1.0.259: minimized windows go to the tray, plain ip:port proxies work as in NEAT and stay connected, and NEAT goal files work as written. Open one bot window yourself and click Update to get it.",
     "mandatory":  false
 }
