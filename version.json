@@ -1,6 +1,6 @@
 {
-    "version":  "1.42.2",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.42.2.exe",
-    "notes":  "A tidier Bots page: the OPTiC BOT counts are on the Uptime button and the O badges line up. An account set to the wrong bot program is no longer started over and over: Start says what is wrong. Alliance Chat Watch is fed by your OPTiC BOT windows.\n\nOPTiC BOT 1.0.265: Delete all army reports, NEAT autorun settings carried over, a map like NEAT’s with the cities listed beside it, panes that fit the window, and NEAT’s SearchCastles in scripts. Open one bot window yourself and click Update to get it, or download it: https://github.com/OPTiC-DEV-AGE1/optic-bot-releases/releases/latest",
+    "version":  "1.42.3",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.42.3.exe",
+    "notes":  "OPTiC BOT is recognised whatever its file is called, so its accounts are no longer started again and again, and a window OPTiC started is not opened twice after OPTiC restarts. Applying accounts answer \"fleet me\" from OPTiC BOT too. Click an account\u0027s name in Uptime for its days by the hour.\n\nOPTiC BOT 1.0.310: stuck marches called back by themselves, items mass applied, attack warnings, report and mail deletion, End holiday, Totals, a NEAT-style log area and city icons, and reports on opticmonitor.com. Open one bot window yourself and click Update to get it, or download it: https://github.com/OPTiC-DEV-AGE1/optic-bot-releases/releases/latest",
     "mandatory":  false
 }
