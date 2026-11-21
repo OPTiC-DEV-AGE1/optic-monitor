@@ -1,6 +1,6 @@
 {
-    "version":  "1.42.4",
-    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.42.4.exe",
-    "notes":  "Bug fixes",
+    "version":  "1.42.5",
+    "download":  "https://github.com/OPTiC-DEV-AGE1/optic-monitor/releases/latest/download/OPTiCAccountMonitor_Setup_1.42.5.exe",
+    "notes":  "Proxy lines carry at most 10 accounts each (15 only when the others are down), each account keeps its saved line, and a busy proxy is no longer taken for a dead one. Incoming-attack alerts skip your own accounts.\n\nOPTiC BOT 1.0.350: connections that hold like NEAT\u0027s, a NEAT-style log with notices in it instead of bars across the top, cities that pray when they need to, and stuck marches that wait before being called back. Open one bot window yourself and click Update to get it, or download it: https://github.com/OPTiC-DEV-AGE1/optic-bot-releases/releases/latest",
     "mandatory":  false
 }
